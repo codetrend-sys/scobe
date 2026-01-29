@@ -140,7 +140,8 @@
   toner_32,toner_33,toner_34,toner_35,toner_36,toner_37,toner_38,toner_39,toner_40,toner_41,toner_42,toner_43,toner_44,toner_45,toner_46,toner_47,toner_48,toner_49,toner_50,toner_51,toner_52,toner_53,toner_54,toner_55,toner_56,toner_57,toner_58,toner_59,toner_60,toner_61,toner_62,toner_63,toner_64,toner_65,toner_66,toner_67,toner_68,toner_69,toner_70,toner_71,toner_72,toner_73,toner_74,toner_75,toner_76,
   toner_77,toner_78,toner_79,toner_80,toner_81,toner_82,toner_83,toner_84,toner_85,toner_86,toner_87,toner_88,toner_89,toner_90,toner_91,toner_92,toner_93,toner_94,toner_95,toner_96,toner_97,toner_98,toner_99,toner_100,toner_101,toner_102,toner_103,toner_104,toner_105,toner_106,toner_107,toner_108,toner_109,toner_110,toner_111,toner_112,toner_113,toner_114,toner_115,toner_116,toner_117,toner_118,toner_119,
   toner_120,toner_121,toner_122,toner_123,toner_124,toner_125,toner_126,toner_127,toner_128,toner_129,toner_130,toner_131,toner_132,toner_133,toner_134,toner_135,toner_136,toner_137,toner_138,toner_139,toner_140,toner_141,toner_142,toner_143,toner_144,toner_145,toner_146,toner_147,toner_148,toner_149,toner_150,toner_151,toner_152,toner_153,toner_154,toner_155,toner_156,toner_157,toner_158,toner_159,toner_160,
-  toner_161,toner_162,toner_163,toner_164,toner_165,toner_166,toner_167,
+  toner_161,toner_162,toner_163,toner_164,toner_165,toner_166,toner_167,vente,vente_1,vente_2,vente_3,vente_4,vente_5,vente_6,vente_7,vente_8,vente_9,vente_10,vente_11,vente_12,scanner,scanner_1,scanner_2,scanner_3,scanner_4,scanner_5,scanner_6,scanner_7,scanner_8,scanner_9,scanner_10,scanner_11,scanner_12,scanner_13,scanner_14,scanner_15,scanner_16,scanner_17,scanner_18,scanner_19,scanner_20,scanner_21,scanner_22,
+  scanner_23,scanner_24,scanner_25,scanner_26,scanner_27,scanner_28,scanner_29,scanner_30,scanner_31,scanner_32,scanner_33,scanner_34,scanner_35,scanner_36,scanner_37,scanner_38,scanner_39,scanner_40,scanner_41,scanner_42,scanner_43,scanner_44,scanner_45,scanner_46,scanner_47,scanner_48,scanner_49,scanner_50,scanner_51,
 
 
   } from '../../images';
@@ -3394,10 +3395,86 @@
           { id: 164, name: "Toner Original KONICA MINOLTA TN-711", price: 1200, rating: null, stock: null, imageUrl: toner_164 },
           { id: 165, name: "Toner Original KONICA MINOLTA TN-712", price: 1200, rating: null, stock: null, imageUrl: toner_165 },
           { id: 166, name: "Toner Original KONICA MINOLTA TN-713", price: 1150, rating: null, stock: null, imageUrl: toner_166 },
-          { id: 167, name: "Toner Original LEXMARK B225000", price: 700, rating: null, stock: null, imageUrl: toner_167 }
-        
+          { id: 167, name: "Toner Original LEXMARK B225000", price: 700, rating: null, stock: null, imageUrl: toner_167 }       
         ]
       },
+      {
+        id: 811,
+        name: "Point De Vente",
+        imageUrl: vente,
+        products: [
+          { id: 1, name: "Ecran Tactile de la Caisse ZKBio610", price: 6000, rating: null, stock: null, imageUrl: vente_1 },
+          { id: 2, name: "Imprimante Thermique CITIZEN CT-E351", price: 2200, rating: null, stock: null, imageUrl: vente_2 },
+          { id: 3, name: "Imprimante Thermique ZKTECO", price: 1400, rating: null, stock: null, imageUrl: vente_3 },
+          { id: 4, name: "Lecteur Code à Barre Avec Fil DELI", price: 1400, rating: null, stock: null, imageUrl: vente_4 },
+          { id: 5, name: "Lecteur Code à Barre Avec Fil OPTICON", price: 2800, rating: null, stock: null, imageUrl: vente_5 },
+          { id: 6, name: "Lecteur Code à Barre Avec Fil ZKTECO", price: 1300, rating: null, stock: null, imageUrl: vente_6 },
+          { id: 7, name: "Lecteur Code à Barre Avec Fil ZKTECO ZKB201", price: 680, rating: null, stock: null, imageUrl: vente_7 },
+          { id: 8, name: "Lecteur Code à Barre Sans Fil 1D ZKTECO", price: 650, rating: null, stock: null, imageUrl: vente_8 },
+          { id: 9, name: "Lecteur Code à Barre Sans Fil 2D ZKTECO", price: 750, rating: null, stock: null, imageUrl: vente_9 },
+          { id: 10, name: "Lecteur Code à Barre Sans Fil Deli 14953W", price: 750, rating: null, stock: null, imageUrl: vente_10 },
+          { id: 11, name: "Support Lecteur Code à Barre ZKTECO", price: 150, rating: null, stock: null, imageUrl: vente_11 },
+          { id: 12, name: "Tiroir Caisse ZKTECO / WD-LINK", price: 600, rating: null, stock: null, imageUrl: vente_12 }
+        ]
+      },
+      {
+        id: 812,
+        name: "Imprimantes Et Scanner",
+        imageUrl: scanner,
+        products: [
+          { id: 1, name: "Imprimante Canon Laser i-SENSYS LBP631Cw", price: 2800, rating: null, stock: null, imageUrl: scanner_1 },
+          { id: 2, name: "Imprimante Canon Laser Monochrome i-SENSYS LBP6030B", price: 2000, rating: null, stock: null, imageUrl: scanner_2 },
+          { id: 3, name: "Imprimante Canon Laser Monochrome i-SENSYS MF453dw", price: 2500, rating: null, stock: null, imageUrl: scanner_3 },
+          { id: 4, name: "Imprimante Canon PIXMA G3410 à réservoirs rechargeables", price: 1800, rating: null, stock: null, imageUrl: scanner_4 },
+          { id: 5, name: "Imprimante Canon PIXMA G3411", price: 2100, rating: null, stock: null, imageUrl: scanner_5 },
+          { id: 6, name: "Imprimante Canon PIXMA G3420", price: 2150, rating: null, stock: null, imageUrl: scanner_6 },
+          { id: 7, name: "Imprimante Canon PIXMA MG2540S", price: 550, rating: null, stock: null, imageUrl: scanner_7 },
+          { id: 8, name: "Imprimante Canon PIXMA TS3140", price: 600, rating: null, stock: null, imageUrl: scanner_8 },
+          { id: 9, name: "Imprimante Epson EcoTank L4150", price: 7000, rating: null, stock: null, imageUrl: scanner_9 },
+          { id: 10, name: "Imprimante Epson EcoTank L3110", price: 2000, rating: null, stock: null, imageUrl: scanner_10 },
+          { id: 11, name: "Imprimante Epson EcoTank L3150", price: 2150, rating: null, stock: null, imageUrl: scanner_11 },
+          { id: 12, name: "Imprimante Epson EcoTank L3210", price: 2000, rating: null, stock: null, imageUrl: scanner_12 },
+          { id: 13, name: "Imprimante Epson EcoTank L3250 MFP 3-en-1 WiFi", price: 2300, rating: null, stock: null, imageUrl: scanner_13 },
+          { id: 14, name: "Imprimante Epson EcoTank L3251 A4 à réservoirs rechargeables", price: 2300, rating: null, stock: null, imageUrl: scanner_14 },
+          { id: 15, name: "Imprimante Epson EcoTank L4160 Multifonction", price: 3300, rating: null, stock: null, imageUrl: scanner_15 },
+          { id: 16, name: "Imprimante Epson EcoTank L6170 Multifonction Couleur", price: 4200, rating: null, stock: null, imageUrl: scanner_16 },
+          { id: 17, name: "Imprimante Epson EcoTank L8050 Photo", price: 4400, rating: null, stock: null, imageUrl: scanner_17 },
+          { id: 18, name: "Imprimante Epson EcoTank M1120", price: 2000, rating: null, stock: null, imageUrl: scanner_18 },
+          { id: 19, name: "Imprimante Epson EcoTank M2140 Multifonction", price: 3000, rating: null, stock: null, imageUrl: scanner_19 },
+          { id: 20, name: "Imprimante Étiquette ZYTECO", price: 2000, rating: null, stock: null, imageUrl: scanner_20 },
+          { id: 21, name: "Imprimante Étiquettes GE300 GODEX", price: 3500, rating: null, stock: null, imageUrl: scanner_21 },
+          { id: 22, name: "Imprimante Étiquettes Thermique WD8210 WD-LINK", price: 2000, rating: null, stock: null, imageUrl: scanner_22 },
+          { id: 23, name: "Imprimante Étiquettes ZEBRA GK420t", price: 3800, rating: null, stock: null, imageUrl: scanner_23 },
+          { id: 24, name: "Imprimante HP Color Laser MFP 178nw", price: 3900, rating: null, stock: null, imageUrl: scanner_24 },
+          { id: 25, name: "Imprimante HP Color Laser MFP 179fnw", price: 4500, rating: null, stock: null, imageUrl: scanner_25 },
+          { id: 26, name: "Imprimante HP Couleur LaserJet Pro MFP M183fw", price: 4400, rating: null, stock: null, imageUrl: scanner_26 },
+          { id: 27, name: "Imprimante HP DeskJet 2710", price: 550, rating: null, stock: null, imageUrl: scanner_27 },
+          { id: 28, name: "Imprimante HP Laser 107w", price: 1800, rating: null, stock: null, imageUrl: scanner_28 },
+          { id: 29, name: "Imprimante HP Laser MFP 137fnw", price: 2950, rating: null, stock: null, imageUrl: scanner_29 },
+          { id: 30, name: "Imprimante HP Laser MFP 432fdn", price: 5600, rating: null, stock: null, imageUrl: scanner_30 },
+          { id: 31, name: "Imprimante HP Laser Monochrome Laser M141a Multifonction", price: 2100, rating: null, stock: null, imageUrl: scanner_31 },
+          { id: 32, name: "Imprimante HP Laser Monochrome Laser M141w Multifonction", price: 2200, rating: null, stock: null, imageUrl: scanner_32 },
+          { id: 33, name: "Imprimante HP Laser Monochrome LaserJet Enterprise M406dn", price: 4600, rating: null, stock: null, imageUrl: scanner_33 },
+          { id: 34, name: "Imprimante HP Laser Monochrome LaserJet M111a", price: 1600, rating: null, stock: null, imageUrl: scanner_34 },
+          { id: 35, name: "Imprimante HP Laser Monochrome LaserJet M111w", price: 1700, rating: null, stock: null, imageUrl: scanner_35 },
+          { id: 36, name: "Imprimante HP Laser Monochrome LaserJet Pro M501dn", price: 6100, rating: null, stock: null, imageUrl: scanner_36 },
+          { id: 37, name: "Imprimante HP Laser Monochrome MFP 135a", price: 2250, rating: null, stock: null, imageUrl: scanner_37 },
+          { id: 38, name: "Imprimante HP LaserJet MFP 236D", price: 2750, rating: null, stock: null, imageUrl: scanner_38 },
+          { id: 39, name: "Imprimante HP LaserJet Pro M130nw", price: 2800, rating: null, stock: null, imageUrl: scanner_39 },
+          { id: 40, name: "Imprimante HP Multifonction Laser Monochrome M236dw LaserJet", price: 2600, rating: null, stock: null, imageUrl: scanner_40 },
+          { id: 41, name: "Imprimante HP OfficeJet Pro 7740", price: 3500, rating: null, stock: null, imageUrl: scanner_41 },
+          { id: 42, name: "Imprimante KYOCERA ECOSYS M5521cdw", price: 5500, rating: null, stock: null, imageUrl: scanner_42 },
+          { id: 43, name: "Imprimante KYOCERA Laser FS-1025 MFP", price: 3500, rating: null, stock: null, imageUrl: scanner_43 },
+          { id: 44, name: "Imprimante KYOCERA TASKalfa 2320", price: 5600, rating: null, stock: null, imageUrl: scanner_44 },
+          { id: 45, name: "Imprimante LEXMARK B2236dw", price: 16800, rating: null, stock: null, imageUrl: scanner_45 },
+          { id: 46, name: "Imprimante LEXMARK MB2236dw", price: 16800, rating: null, stock: null, imageUrl: scanner_46 },
+          { id: 47, name: "Imprimante Thermique CITIZEN CT", price: 16800, rating: null, stock: null, imageUrl: scanner_47 },
+          { id: 48, name: "Imprimante Thermique ZKTECO", price: 16800, rating: null, stock: null, imageUrl: scanner_48 },
+          { id: 49, name: "Photocopieur Multifonction KYOCERA M4132IDN", price: 16800, rating: null, stock: null, imageUrl: scanner_49 },
+          { id: 50, name: "Photocopieur Multifonction KYOCERA M8130CIDN", price: 24000, rating: null, stock: null, imageUrl: scanner_50 },
+          { id: 51, name: "Scanner EPSON DS-1630", price: 2850, rating: null, stock: null, imageUrl: scanner_51 }
+        ]
+      }
     ]
   },
 

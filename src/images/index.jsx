@@ -2700,7 +2700,71 @@ import toner_164 from './toner/toner_164.jpg';
 import toner_165 from './toner/toner_165.jpg';
 import toner_166 from './toner/toner_166.jpg';
 import toner_167 from './toner/toner_167.jpg';
-
+import vente from './vente/vente.jpg'
+import vente_1 from './vente/vente_1.jpg';
+import vente_2 from './vente/vente_2.jpg';
+import vente_3 from './vente/vente_3.jpg';
+import vente_4 from './vente/vente_4.jpg';
+import vente_5 from './vente/vente_5.jpg';
+import vente_6 from './vente/vente_6.jpg';
+import vente_7 from './vente/vente_7.jpg';
+import vente_8 from './vente/vente_8.jpg';
+import vente_9 from './vente/vente_9.jpg';
+import vente_10 from './vente/vente_10.jpg';
+import vente_11 from './vente/vente_11.jpg';
+import vente_12 from './vente/vente_12.jpg';
+import scanner from './scanner/scanner.jpg'
+import scanner_1 from './scanner/scanner_1.jpg';
+import scanner_2 from './scanner/scanner_2.jpg';
+import scanner_3 from './scanner/scanner_3.jpg';
+import scanner_4 from './scanner/scanner_4.jpg';
+import scanner_5 from './scanner/scanner_5.jpg';
+import scanner_6 from './scanner/scanner_6.jpg';
+import scanner_7 from './scanner/scanner_7.jpg';
+import scanner_8 from './scanner/scanner_8.jpg';
+import scanner_9 from './scanner/scanner_9.jpg';
+import scanner_10 from './scanner/scanner_10.jpg';
+import scanner_11 from './scanner/scanner_11.jpg';
+import scanner_12 from './scanner/scanner_12.jpg';
+import scanner_13 from './scanner/scanner_13.jpg';
+import scanner_14 from './scanner/scanner_14.jpg';
+import scanner_15 from './scanner/scanner_15.jpg';
+import scanner_16 from './scanner/scanner_16.jpg';
+import scanner_17 from './scanner/scanner_17.jpg';
+import scanner_18 from './scanner/scanner_18.jpg';
+import scanner_19 from './scanner/scanner_19.jpg';
+import scanner_20 from './scanner/scanner_20.jpg';
+import scanner_21 from './scanner/scanner_21.jpg';
+import scanner_22 from './scanner/scanner_22.jpg';
+import scanner_23 from './scanner/scanner_23.jpg';
+import scanner_24 from './scanner/scanner_24.jpg';
+import scanner_25 from './scanner/scanner_25.jpg';
+import scanner_26 from './scanner/scanner_26.jpg';
+import scanner_27 from './scanner/scanner_27.jpg';
+import scanner_28 from './scanner/scanner_28.jpg';
+import scanner_29 from './scanner/scanner_29.jpg';
+import scanner_30 from './scanner/scanner_30.jpg';
+import scanner_31 from './scanner/scanner_31.jpg';
+import scanner_32 from './scanner/scanner_32.jpg';
+import scanner_33 from './scanner/scanner_33.jpg';
+import scanner_34 from './scanner/scanner_34.jpg';
+import scanner_35 from './scanner/scanner_35.jpg';
+import scanner_36 from './scanner/scanner_36.jpg';
+import scanner_37 from './scanner/scanner_37.jpg';
+import scanner_38 from './scanner/scanner_38.jpg';
+import scanner_39 from './scanner/scanner_39.jpg';
+import scanner_40 from './scanner/scanner_40.jpg';
+import scanner_41 from './scanner/scanner_41.jpg';
+import scanner_42 from './scanner/scanner_42.jpg';
+import scanner_43 from './scanner/scanner_43.jpg';
+import scanner_44 from './scanner/scanner_44.jpg';
+import scanner_45 from './scanner/scanner_45.jpg';
+import scanner_46 from './scanner/scanner_46.jpg';
+import scanner_47 from './scanner/scanner_47.jpg';
+import scanner_48 from './scanner/scanner_48.jpg';
+import scanner_49 from './scanner/scanner_49.jpg';
+import scanner_50 from './scanner/scanner_50.jpg';
+import scanner_51 from './scanner/scanner_51.jpg';
 
 
 
@@ -2850,7 +2914,9 @@ import toner_167 from './toner/toner_167.jpg';
   toner_32,toner_33,toner_34,toner_35,toner_36,toner_37,toner_38,toner_39,toner_40,toner_41,toner_42,toner_43,toner_44,toner_45,toner_46,toner_47,toner_48,toner_49,toner_50,toner_51,toner_52,toner_53,toner_54,toner_55,toner_56,toner_57,toner_58,toner_59,toner_60,toner_61,toner_62,toner_63,toner_64,toner_65,toner_66,toner_67,toner_68,toner_69,toner_70,toner_71,toner_72,toner_73,toner_74,toner_75,toner_76,
   toner_77,toner_78,toner_79,toner_80,toner_81,toner_82,toner_83,toner_84,toner_85,toner_86,toner_87,toner_88,toner_89,toner_90,toner_91,toner_92,toner_93,toner_94,toner_95,toner_96,toner_97,toner_98,toner_99,toner_100,toner_101,toner_102,toner_103,toner_104,toner_105,toner_106,toner_107,toner_108,toner_109,toner_110,toner_111,toner_112,toner_113,toner_114,toner_115,toner_116,toner_117,toner_118,toner_119,
   toner_120,toner_121,toner_122,toner_123,toner_124,toner_125,toner_126,toner_127,toner_128,toner_129,toner_130,toner_131,toner_132,toner_133,toner_134,toner_135,toner_136,toner_137,toner_138,toner_139,toner_140,toner_141,toner_142,toner_143,toner_144,toner_145,toner_146,toner_147,toner_148,toner_149,toner_150,toner_151,toner_152,toner_153,toner_154,toner_155,toner_156,toner_157,toner_158,toner_159,toner_160,
-  toner_161,toner_162,toner_163,toner_164,toner_165,toner_166,toner_167
+  toner_161,toner_162,toner_163,toner_164,toner_165,toner_166,toner_167,vente,vente_1,vente_2,vente_3,vente_4,vente_5,vente_6,vente_7,vente_8,vente_9,vente_10,vente_11,vente_12,scanner,scanner_1,scanner_2,scanner_3,scanner_4,scanner_5,scanner_6,scanner_7,scanner_8,scanner_9,scanner_10,scanner_11,scanner_12,scanner_13,scanner_14,scanner_15,scanner_16,scanner_17,scanner_18,scanner_19,scanner_20,scanner_21,scanner_22,
+  scanner_23,scanner_24,scanner_25,scanner_26,scanner_27,scanner_28,scanner_29,scanner_30,scanner_31,scanner_32,scanner_33,scanner_34,scanner_35,scanner_36,scanner_37,scanner_38,scanner_39,scanner_40,scanner_41,scanner_42,scanner_43,scanner_44,scanner_45,scanner_46,scanner_47,scanner_48,scanner_49,scanner_50,scanner_51,
+  
   
   
 
