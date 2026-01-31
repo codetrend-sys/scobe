@@ -1,17 +1,18 @@
 import { X, Star, ShoppingCart, Truck, ShieldCheck, ChevronUp, Type, Heart } from 'lucide-react';
 import { useParams } from "react-router-dom";
 import { useState,useEffect } from "react";
-import boutiqueData from "../data/data";
+import { useCatalog } from '../../context/CatalogContext.jsx';
 import ProductDetail from "./ProductDetails";
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
 
 export default function Product(props) {
+  const { categories, loading } = useCatalog();
   const { favorites, toggleFavorite } = useFavorites();
   const params = useParams();
   const id = props.subCategory?.id?.toString() || params.id;
 
-  const subCategory = boutiqueData
+  const subCategory = (categories || [])
     .flatMap(cat => cat.subcategories)
     .find(sub => sub.id.toString() === id);
 
@@ -24,6 +25,10 @@ export default function Product(props) {
   // const [favorites, setFavorites] = useState([]);
 
   const itemsPerPage = 10;
+
+  if (loading) {
+    return <p className="text-center py-20">Chargement...</p>;
+  }
 
   if (!subCategory) {
     return <p className="text-center py-20">Sous-catégorie introuvable</p>;

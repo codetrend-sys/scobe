@@ -74,17 +74,6 @@ export default function ProductDetail({
                   <ShieldCheck className="w-5 h-5 text-blue-500 " />
                   Garantie qualité
                 </div>
-                <span
-                  className={`font-semibold ${
-                    product.stock > 10
-                      ? "text-green-600"
-                      : "text-orange-600"
-                  }` }
-                >
-                  {product.stock > 10
-                    ? "En stock"
-                    : `Stock limité (${product.stock})`}
-                </span>
               </div>
 
               <button
@@ -92,12 +81,7 @@ export default function ProductDetail({
                   onAddToCart(product);
                   onClose();
                 }}
-                disabled={product.stock === 0}
-                className={`w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-lg transition ${
-                  product.stock === 0
-                    ? "bg-gray-300 text-gray-500"
-                    : "bg-blue-500 text-white hover:bg-green-700"
-                }`}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-lg transition bg-blue-500 text-white hover:bg-green-700"
               >
                 <ShoppingCart className="w-6 h-6" />
                 Ajouter au panier

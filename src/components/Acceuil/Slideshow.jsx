@@ -6,8 +6,8 @@ import { b, p, o,informatique,imprimante,print,scolaire } from '../../images/ind
 const products = [
   { id: 1, name: "Papeterie Deluxe", description: "Tout pour vos besoins en papeterie.", image: imprimante },
   { id: 2, name: "Stylo Premium", description: "Stylos élégants pour tous vos écrits.", image: informatique },
-  { id: 3, name: "Cahier Artistique", description: "Cahiers de qualité pour vos idées créatives.", image: print },
-  { id: 4, name: "Cahier Artistique", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
+  { id: 3, name: "Fournitures Scolaires", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
+  { id: 4, name: "Cahier Artistique", description: "Cahiers de qualité pour vos idées créatives.", image: print },
 ];
 
 export default function SlideShow() {

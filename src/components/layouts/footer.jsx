@@ -4,11 +4,12 @@ import { FaWhatsapp } from 'react-icons/fa';
 
 import { Truck, Star, MessageCircle } from 'lucide-react';
 import logo from '../../images/logo.png';
-import data from '../data/data.js';
+import { useCatalog } from '../../context/CatalogContext.jsx';
 import { NavLink } from 'react-router-dom';
 
 
 export function Footer() {
+  const { categories, loading } = useCatalog();
   return (
     <footer className="bg-gradient-to-r from-scobe-blue-dark to-scobe-blue-light text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -52,17 +53,16 @@ export function Footer() {
             <h3 className="text-white font-bold mb-4 ">Catégories</h3>
             
              <div className="grid grid-cols-2 gap-6 text-sm">
-              {data.map((cat) => (
-                <NavLink
-                  to={`/categorie/${cat.id}`}
-                  key={cat.id}
-                  className="text-sm text-white/90 hover:text-orange-500 cursor-pointer transition-colors block"
-                >
-                  {cat.name}
-                </NavLink>               
-              ))}        
-              </div>      
-           
+                {loading ? <div>Chargement...</div> : (categories || []).map((cat) => (
+                  <NavLink
+                    to={`/categorie/${cat.id}`}
+                    key={cat.id}
+                    className="text-sm text-white/90 hover:text-orange-500 cursor-pointer transition-colors block"
+                  >
+                    {cat.name}
+                  </NavLink>
+                ))}
+              </div>
           </div>
 
           {/* SUPPORT – À DROITE AVEC ESPACEMENT */}

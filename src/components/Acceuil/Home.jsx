@@ -1,4 +1,4 @@
-import boutiqueData from '../data/data.js';
+import { useCatalog } from '../../context/CatalogContext.jsx';
 import CategoryCard from '../layers/CategoriesList.jsx';
 import Product from '../layers/Product.jsx';
 import SlideShow from './Slideshow.jsx';
@@ -7,10 +7,14 @@ import { ProductSlider } from '../layers/ProductSlider.jsx';
 import ContactPremium from '../pages/Contact.jsx';
 
 export default function Home() {
-   const featuredProducts = boutiqueData
+  const { categories, loading } = useCatalog();
+  
+  const featuredProducts = (categories || [])
   .flatMap(category => category.subcategories)   // toutes les sous-catégories
   .flatMap(sub => sub.products)                  // tous les produits
   .filter(product => product.featured === true); // seulement les featured
+
+  if (loading) return <div className="text-center py-16">Chargement...</div>;
 
     return (
         <>
@@ -25,7 +29,7 @@ export default function Home() {
           </p>
         </div>
   <div className="flex flex-wrap justify-center gap-4">
-          {boutiqueData.map((category) => (
+          {(categories || []).map((category) => (
             <div key={category.id} className="w-1/2 md:w-1/3 lg:w-1/5 flex justify-center">
               <CategoryCard category={category} />
             </div>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Header } from './components/layouts/header'
 import { Footer } from './components/layouts/footer';
 import Home from './components/Acceuil/Home.jsx';
@@ -16,6 +16,9 @@ import CartPage from './components/pages/CartPage.jsx';
 import ChatBot from './components/layers/ChatBot.jsx';
 import Favorites from './components/pages/Favorites.jsx';
 import Contact from './components/pages/Contact.jsx';
+import AdminLogin from './components/admin/AdminLogin.jsx';
+import AdminDashboard from './components/admin/AdminDashboard.jsx';
+import RequireAdmin from './components/admin/RequireAdmin.jsx';
 import ScrollToTop from './components/items/scrolltotop.jsx'
 
 
@@ -41,6 +44,17 @@ function App() {
       <Route path="/favorites" element={<Favorites />} />
       <Route path="/" element={<Home/>}/>
       <Route path="/contact" element={<Contact />} />
+      <Route path="/admin/login" element={<Navigate to="/espace-prive/login" replace />} />
+      <Route path="/admin" element={<Navigate to="/espace-prive" replace />} />
+      <Route path="/espace-prive/login" element={<AdminLogin />} />
+      <Route
+        path="/espace-prive"
+        element={
+          <RequireAdmin>
+            <AdminDashboard />
+          </RequireAdmin>
+        }
+      />
       </Routes>
       
      

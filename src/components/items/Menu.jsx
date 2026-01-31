@@ -6,6 +6,7 @@ import { CategoriesDropdown } from "./DropDown.jsx";
 import { SearchBar } from './SearchBar.jsx';
 import logo from '../../images/logo.png';
 import { useFavorites } from '../../context/FavoritesContext.jsx';
+import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
 
 
 export function MobileMenu() {
@@ -17,6 +18,7 @@ export function MobileMenu() {
   }, [open]);
   const { favorites } = useFavorites();
   const favoritesCount = favorites.length;
+  const { isAdminAuthenticated } = useAdminAuth();
 
   return (
     <>
@@ -73,6 +75,11 @@ export function MobileMenu() {
                   Contact
                 </p>
               </NavLink>            
+              <NavLink to={isAdminAuthenticated ? "/espace-prive" : "/espace-prive/login"} onClick={() => setOpen(false)}>
+                <p className="text-gray-700 mt-5 hover:text-blue-900 transition-colors font-medium">
+                  Espace Privé
+                </p>
+              </NavLink>
               </nav>
           </div>
         </>,

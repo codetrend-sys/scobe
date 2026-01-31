@@ -17,15 +17,15 @@ export function CartProvider({ children }) {
     setCartItems(prev => {
       const existing = prev.find(i => i.product.id === product.id);
       if (existing) {
-        return prev.map(i => i.product.id === product.id ? { ...i, quantity: Math.min(i.quantity + quantity, product.stock) } : i);
+        return prev.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + quantity } : i);
       }
-      return [...prev, { id: Date.now(), product, quantity: Math.min(quantity, product.stock) }];
+      return [...prev, { id: Date.now(), product, quantity }];
     });
     setOpen(true);
   };
 
   const updateQuantity = (itemId, newQty) => {
-    setCartItems(prev => prev.map(i => i.id === itemId ? { ...i, quantity: Math.max(1, Math.min(newQty, i.product.stock)) } : i));
+    setCartItems(prev => prev.map(i => i.id === itemId ? { ...i, quantity: Math.max(1, newQty) } : i));
   };
 
   const removeItem = (itemId) => {

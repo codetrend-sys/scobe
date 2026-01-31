@@ -3,6 +3,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { Plus, Minus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 
 export default function Checkout() {
   const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
@@ -75,24 +76,49 @@ export default function Checkout() {
   formData.append('_captcha', 'false');
 
   try {
-    const res = await fetch(
-      'https://formsubmit.co/nissrinmahan02@gmail.com',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
-        },
-        body: formData.toString(),
-      }
-    );
+    // Enregistrer la commande dans Supabase (table: orders)
+    try {
+      const { data: inserted, error: insertErr } = await supabase
+        .from('orders')
+        .insert([
+          {
+            order_id: order.id,
+            user_id: user?.id ?? null,
+            shipping: order.shipping,
+            items: order.items,
+            total: order.total,
+            status: 'pending',
+            created_at: order.createdAt,
+          },
+        ])
+        .select()
+        .single();
 
-    if (!res.ok) {
-      throw new Error('Erreur Formsubmit');
+      if (insertErr) {
+        console.error('Erreur insertion commande Supabase', insertErr);
+        setError(`Commande créée localement, mais échec d'enregistrement sur le serveur: ${insertErr.message || insertErr}`);
+      } else {
+        console.info('Commande enregistrée dans Supabase', inserted);
+      }
+    } catch (supErr) {
+      console.error('Erreur Supabase:', supErr);
+      setError("Impossible d'enregistrer la commande sur le serveur.");
     }
 
+    // Envoi Formsubmit (email)
+    const res = await fetch('https://formsubmit.co/nissrinmahan02@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+      },
+      body: formData.toString(),
+    });
+
+    if (!res.ok) throw new Error('Erreur Formsubmit');
+
     clearCart();
-    sendToWhatsApp(order); // ✅ WhatsApp reste inchangé
+    sendToWhatsApp(order);
     navigate('/order-confirmation');
 
   } catch (e) {
@@ -115,7 +141,7 @@ export default function Checkout() {
   }
 
   const sendToWhatsApp = (order) => {
-  const phoneNumber = "212661655137"; // ⚠️ numéro WhatsApp (sans +)
+  const phoneNumber = "212693393610"; //
 
   const itemsText = order.items
     .map(
@@ -162,7 +188,7 @@ export default function Checkout() {
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="w-10 text-center">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)} disabled={item.quantity >= item.product.stock} className="p-1 hover:bg-gray-200 rounded">
+                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1 hover:bg-gray-200 rounded">
                     <Plus className="w-4 h-4" />
                   </button>
                   <button onClick={() => removeItem(item.id)} className="ml-auto p-1 text-red-600 hover:bg-red-50 rounded">

@@ -8,12 +8,14 @@ import { NavLink } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 // import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext.jsx';
+import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
 
 export function Header() {
   const { cartItems, setOpen } = useCart();
   // const { user } = useAuth();
   // const navigate = useNavigate();
   const { favorites } = useFavorites();
+  const { isAdminAuthenticated } = useAdminAuth();
   const favoritesCount = favorites.length;
 
   // Show number of distinct products (length) instead of total quantity
@@ -59,9 +61,14 @@ export function Header() {
               <CategoriesDropdown/>
 
               <NavLink to={`/contact`}>
-              <p  className="text-gray-700 hover:text-blue-900 transition-colors font-medium">
-                Contact
-              </p>
+                <p className="text-gray-700 hover:text-blue-900 transition-colors font-medium">
+                  Contact
+                </p>
+              </NavLink>
+              <NavLink to={isAdminAuthenticated ? "/espace-prive" : "/espace-prive/login"}>
+                <p className="text-gray-700 hover:text-blue-900 transition-colors font-medium">
+                  Espace Privé
+                </p>
               </NavLink>
             </nav>
           </div>

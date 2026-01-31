@@ -1,14 +1,16 @@
 import { useParams } from "react-router-dom";
-import boutiqueData from '../data/data.js';
 import Product from "./Product.jsx";
 import { useState } from "react";
+import { useCatalog } from '../../context/CatalogContext.jsx';
 
 export default function SousCategorieCard() {
   const { id } = useParams(); // id de la catégorie
-  const category = boutiqueData.find(cat => cat.id.toString() === id);
+  const { categories, loading } = useCatalog();
+  const category = categories.find(cat => String(cat.id) === String(id));
 
   const [selectedCat, setSelectedCat] = useState(null); // stocke la sous-catégorie sélectionnée
 
+  if (loading) return <p className="text-center py-20">Chargement...</p>;
   if (!category) return <p className="text-center py-20">Catégorie introuvable</p>;
 
   return (

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import boutiqueData from '../data/data';
 import ProductDetail from '../layers/ProductDetails';
 import { Star } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useCatalog } from '../../context/CatalogContext.jsx';
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -14,10 +14,9 @@ export default function SearchResults() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const { categories, loading } = useCatalog();
   // flatten all products
-  const allProducts = boutiqueData
-    .flatMap(cat => cat.subcategories)
-    .flatMap(sub => sub.products || []);
+  const allProducts = (categories || []).flatMap(cat => (cat.subcategories || []).flatMap(sub => (sub.products || []).map(p => ({ ...p, category: cat.name }))));
 
   const matches = q ? allProducts.filter(p => {
     const name = (p.name || '').toLowerCase();

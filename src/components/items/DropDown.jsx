@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import boutiqueData from "../data/data.js";
 import { NavLink } from "react-router-dom";
+import { useCatalog } from '../../context/CatalogContext.jsx';
 
 export function CategoriesDropdown() {
   // visible: whether the dropdown DOM is mounted
@@ -60,6 +60,8 @@ export function CategoriesDropdown() {
     }
   };
 
+  const ctx = useCatalog();
+
   return (
     <div
       className="relative"
@@ -87,11 +89,11 @@ export function CategoriesDropdown() {
           }
           role="menu"
         >
-          {boutiqueData.map((cat) => (
+          { ctx.loading ? <div>Chargement...</div> : (ctx.categories || []).map((cat) => (
             <div key={cat.name}>
               <h4 className="font-semibold text-gray-900 mb-3">{cat.name}</h4>
               <ul className="space-y-2">
-                {cat.subcategories.map((sub) => (
+                {(cat.subcategories || []).map((sub) => (
                   <NavLink 
                     to={`/souscategorie/${sub.id}`}
                     key={sub.id}
@@ -102,7 +104,7 @@ export function CategoriesDropdown() {
                 ))}
               </ul>
             </div>
-          ))}
+          )) }
         </div>
       )}
     </div>

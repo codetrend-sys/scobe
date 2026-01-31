@@ -30,16 +30,10 @@ export default function ProductFeatured({ product }) {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            if (product.stock > 0) addToCart(product, 1);
+            addToCart(product, 1);
           }}
-          disabled={product.stock === 0}
-          className={`absolute bottom-1 left-1/2 -translate-x-1/2 translate-y-full group-hover:translate-y-[-40%]  
-          px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all duration-300 shadow-xl 
-          ${
-            product.stock > 0
-              ? "bg-white text-gray-900 hover:bg-blue-600 hover:text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
+          className="absolute bottom-1 left-1/2 -translate-x-1/2 translate-y-full group-hover:translate-y-[-40%]  
+          px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all duration-300 shadow-xl bg-white text-gray-900 hover:bg-blue-600 hover:text-white"
         >
           <ShoppingCart className="w-5 h-5" />
           Ajouter au panier
@@ -65,10 +59,6 @@ export default function ProductFeatured({ product }) {
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-gray-800">
             {product.price.toFixed(2)} €
-          </span>
-
-          <span className="text-sm font-bold text-orange-500">
-            {product.stock > 0 ? `${product.stock} en stock` : "Épuisé"}
           </span>
         </div>
       </div>
