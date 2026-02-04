@@ -1,50 +1,85 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-// Identifiants admin – à adapter selon ton besoin
-const ADMIN_EMAIL = 'admin@scobe.local';
-const ADMIN_PASSWORD = 'admin123';
+import { supabase } from '../lib/supabase.js';
 
 const AdminAuthContext = createContext(null);
+const ADMIN_EMAIL = 'admin@scobe.local';
 
 export function AdminAuthProvider({ children }) {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('admin_authenticated');
-      setIsAdminAuthenticated(saved === 'true');
-    } catch {
-      setIsAdminAuthenticated(false);
+    let mounted = true;
+    async function checkSession() {
+      try {
+        const { data } = await supabase.auth.getSession();
+          const session = data?.session || null;
+          if (mounted && session && session.user?.email === ADMIN_EMAIL) {
+            setIsAdminAuthenticated(true);
+            setAdminUser(session.user || null);
+          } else if (mounted) {
+            setIsAdminAuthenticated(false);
+            setAdminUser(null);
+          }
+      } catch (err) {
+        if (mounted) {
+          setIsAdminAuthenticated(false);
+          setAdminUser(null);
+        }
+      }
     }
+
+    checkSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && session.user?.email === ADMIN_EMAIL) {
+        setIsAdminAuthenticated(true);
+        setAdminUser(session.user || null);
+      } else {
+        setIsAdminAuthenticated(false);
+        setAdminUser(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  const login = (email, password) => {
-    const ok =
-      String(email).toLowerCase() === ADMIN_EMAIL.toLowerCase() &&
-      String(password) === ADMIN_PASSWORD;
-
-    if (!ok) return false;
-
-    setIsAdminAuthenticated(true);
+  const login = async (email, password) => {
     try {
-      localStorage.setItem('admin_authenticated', 'true');
-    } catch {
-      // ignore
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      const user = data?.user || data?.session?.user || null;
+      if (!user) return { ok: false, error: 'No user' };
+      if (user.email !== ADMIN_EMAIL) {
+        // Sign out any non-admin user immediately
+        try {
+          await supabase.auth.signOut();
+        } catch {}
+        return { ok: false, error: 'Accès réservé à l\'administrateur' };
+      }
+      // success for admin
+      setIsAdminAuthenticated(true);
+      setAdminUser(user);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message || err };
     }
-    return true;
   };
 
-  const logout = () => {
-    setIsAdminAuthenticated(false);
+  const logout = async () => {
     try {
-      localStorage.removeItem('admin_authenticated');
-    } catch {
-      // ignore
+      await supabase.auth.signOut();
+    } finally {
+      setIsAdminAuthenticated(false);
+      setAdminUser(null);
     }
   };
 
   return (
-    <AdminAuthContext.Provider value={{ isAdminAuthenticated, login, logout }}>
+    <AdminAuthContext.Provider value={{ isAdminAuthenticated, adminUser, login, logout }}>
       {children}
     </AdminAuthContext.Provider>
   );

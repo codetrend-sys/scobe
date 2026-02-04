@@ -18,7 +18,7 @@ export default function AdminLogin() {
     }
   }, [isAdminAuthenticated, navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -27,9 +27,9 @@ export default function AdminLogin() {
       return;
     }
 
-    const ok = login(email, password);
-    if (!ok) {
-      setError("Identifiants admin invalides.");
+    const res = await login(email, password);
+    if (!res?.ok) {
+      setError(res?.error || 'Identifiants admin invalides.');
       return;
     }
 

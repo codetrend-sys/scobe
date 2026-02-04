@@ -213,7 +213,7 @@ export function CatalogProvider({ children }) {
   // ---------- CRUD Produits ----------
   const addProduct = async (categoryId, subId, product) => {
     try {
-      const { error } = await supabase
+      const { data: inserted, error } = await supabase
         .from('products')
         .insert({
           subcategory_id: subId,
@@ -222,9 +222,20 @@ export function CatalogProvider({ children }) {
           rating: product.rating || 0,
           image_url: product.imageUrl || null,
           featured: product.featured || false,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Si le produit est mis en vedette, l'ajouter dans featured_products
+      if (inserted && inserted.featured) {
+        const { error: fErr } = await supabase
+          .from('featured_products')
+          .insert({ product_id: inserted.id });
+        if (fErr) console.warn("Impossible d'ajouter en featured_products:", fErr.message || fErr);
+      }
+
       await loadCategories();
     } catch (err) {
       console.error('Erreur lors de l\'ajout de produit:', err);
@@ -246,6 +257,26 @@ export function CatalogProvider({ children }) {
         .eq('id', productId);
 
       if (error) throw error;
+      // Synchroniser la table featured_products
+      try {
+        if (partial.featured) {
+          // insert if not exists
+          const { data } = await supabase
+            .from('featured_products')
+            .select('*')
+            .eq('product_id', productId)
+            .limit(1);
+          if (!data || data.length === 0) {
+            await supabase.from('featured_products').insert({ product_id: productId });
+          }
+        } else {
+          // remove from featured_products if exists
+          await supabase.from('featured_products').delete().eq('product_id', productId);
+        }
+      } catch (syncErr) {
+        console.warn('Erreur synchronisation featured_products:', syncErr);
+      }
+
       await loadCategories();
     } catch (err) {
       console.error('Erreur lors de la mise à jour de produit:', err);
@@ -261,6 +292,13 @@ export function CatalogProvider({ children }) {
         .eq('id', productId);
 
       if (error) throw error;
+      // supprimer de featured_products si présent
+      try {
+        await supabase.from('featured_products').delete().eq('product_id', productId);
+      } catch (syncErr) {
+        console.warn('Erreur suppression featured_products:', syncErr);
+      }
+
       await loadCategories();
     } catch (err) {
       console.error('Erreur lors de la suppression de produit:', err);

@@ -42,6 +42,7 @@ export default function AdminDashboard() {
   const [imagePreview, setImagePreview] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('');
+  const [editingItemId, setEditingItemId] = useState(null); // Pour l'édition inline
 
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
   const selectedSub = selectedCategory?.subcategories.find((s) => s.id === selectedSubId);
@@ -178,6 +179,7 @@ export default function AdminDashboard() {
     setIsFormOpen(false);
     setIsEditing(false);
     setImagePreview('');
+    setEditingItemId(null);
   };
 
   // ========== CATÉGORIES ==========
@@ -190,6 +192,7 @@ export default function AdminDashboard() {
     setImagePreview('');
     setIsEditing(false);
     setIsFormOpen(true);
+    setEditingItemId(null);
   };
 
   const openEditCategoryForm = (category) => {
@@ -197,6 +200,7 @@ export default function AdminDashboard() {
     setImagePreview(category.imageUrl || '');
     setIsEditing(true);
     setIsFormOpen(true);
+    setEditingItemId(category.id);
   };
 
   const handleSaveCategory = async () => {
@@ -253,6 +257,7 @@ export default function AdminDashboard() {
     setImagePreview('');
     setIsEditing(false);
     setIsFormOpen(true);
+    setEditingItemId(null);
   };
 
   const openEditSubcategoryForm = (sub) => {
@@ -260,6 +265,7 @@ export default function AdminDashboard() {
     setImagePreview(sub.imageUrl || '');
     setIsEditing(true);
     setIsFormOpen(true);
+    setEditingItemId(sub.id);
   };
 
   const handleSaveSubcategory = async () => {
@@ -317,6 +323,7 @@ export default function AdminDashboard() {
     setImagePreview('');
     setIsEditing(false);
     setIsFormOpen(true);
+    setEditingItemId(null);
   };
 
   const openEditProductForm = (product) => {
@@ -324,6 +331,7 @@ export default function AdminDashboard() {
     setImagePreview(product.imageUrl || '');
     setIsEditing(true);
     setIsFormOpen(true);
+    setEditingItemId(product.id);
   };
 
   const handleSaveProduct = async () => {
@@ -472,8 +480,8 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-3">
-            {/* Formulaire */}
-            {isFormOpen && (
+            {/* Formulaire Global - pour Ajouter seulement */}
+            {isFormOpen && editingItemId === null && (
               <div className="bg-white rounded-lg shadow-md p-6 mb-6 border-l-4 border-blue-500">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">
@@ -702,38 +710,138 @@ export default function AdminDashboard() {
             {activeTab === 'categories' && (
               <div className="space-y-3">
                 {categories.map((cat) => (
-                  <div key={cat.id} className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-blue-500 flex gap-4">
-                    {cat.imageUrl && (
-                      <img 
-                        src={cat.imageUrl} 
-                        alt={cat.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
+                  <div key={cat.id}>
+                    {/* Formulaire inline si en édition */}
+                    {editingItemId === cat.id && isFormOpen && (
+                      <div className="bg-white rounded-lg shadow-md p-6 mb-3 border-l-4 border-blue-500">
+                        <div className="flex justify-between items-center mb-6">
+                          <h2 className="text-2xl font-bold text-gray-900">✏️ Modifier Catégorie</h2>
+                          <button
+                            onClick={resetForm}
+                            className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded"
+                          >
+                            <X size={24} />
+                          </button>
+                        </div>
+
+                        <div className="space-y-5">
+                          {/* Champ Nom */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Nom <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.name || ''}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                              placeholder="Nom de la catégorie"
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                formErrors.name ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                            {formErrors.name && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
+                            )}
+                          </div>
+
+                          {/* Champ Description */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Description
+                            </label>
+                            <textarea
+                              value={formData.description || ''}
+                              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                              placeholder="Description de la catégorie"
+                              rows="3"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                          </div>
+
+                          {/* Upload Image */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Image
+                            </label>
+                            <div className="flex gap-4">
+                              <div className="flex-1">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleImageUpload(e.target.files?.[0])}
+                                  disabled={isUploading}
+                                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                />
+                                {isUploading && <p className="text-blue-600 text-sm mt-2">📤 Upload en cours...</p>}
+                              </div>
+                              {imagePreview && (
+                                <img 
+                                  src={imagePreview} 
+                                  alt="Aperçu"
+                                  className="w-24 h-24 object-cover rounded-lg border border-gray-300"
+                                />
+                              )}
+                            </div>
+                            {formErrors.image && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.image}</p>
+                            )}
+                          </div>
+
+                          {/* Boutons Action */}
+                          <div className="flex gap-3 pt-4 border-t border-gray-200">
+                            <button
+                              onClick={handleSaveCategory}
+                              disabled={isUploading}
+                              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg transition font-semibold"
+                            >
+                              <Check size={20} />
+                              Mettre à jour
+                            </button>
+                            <button
+                              onClick={resetForm}
+                              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg transition font-semibold"
+                            >
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     )}
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg text-gray-900">{cat.name}</h3>
-                      {cat.description && (
-                        <p className="text-sm text-gray-600 mt-1">{cat.description}</p>
+
+                    {/* Item */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-blue-500 flex gap-4">
+                      {cat.imageUrl && (
+                        <img 
+                          src={cat.imageUrl} 
+                          alt={cat.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
                       )}
-                      <p className="text-xs text-gray-500 mt-2">
-                        🎯 {cat.subcategories?.length || 0} sous-catégories
-                      </p>
-                    </div>
-                    <div className="flex gap-2 ml-4">
-                      <button
-                        onClick={() => openEditCategoryForm(cat)}
-                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
-                        title="Modifier"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCategory(cat.id)}
-                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
-                        title="Supprimer"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg text-gray-900">{cat.name}</h3>
+                        {cat.description && (
+                          <p className="text-sm text-gray-600 mt-1">{cat.description}</p>
+                        )}
+                        <p className="text-xs text-gray-500 mt-2">
+                          🎯 {cat.subcategories?.length || 0} sous-catégories
+                        </p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <button
+                          onClick={() => openEditCategoryForm(cat)}
+                          className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                          title="Modifier"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCategory(cat.id)}
+                          className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+                          title="Supprimer"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -749,33 +857,119 @@ export default function AdminDashboard() {
                   </p>
                 </div>
                 {selectedCategory.subcategories?.map((sub) => (
-                  <div key={sub.id} className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-green-500 flex gap-4">
-                    {sub.imageUrl && (
-                      <img 
-                        src={sub.imageUrl} 
-                        alt={sub.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
+                  <div key={sub.id}>
+                    {/* Formulaire inline si en édition */}
+                    {editingItemId === sub.id && isFormOpen && (
+                      <div className="bg-white rounded-lg shadow-md p-6 mb-3 border-l-4 border-green-500">
+                        <div className="flex justify-between items-center mb-6">
+                          <h2 className="text-2xl font-bold text-gray-900">✏️ Modifier Sous-catégorie</h2>
+                          <button
+                            onClick={resetForm}
+                            className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded"
+                          >
+                            <X size={24} />
+                          </button>
+                        </div>
+
+                        <div className="space-y-5">
+                          {/* Champ Nom */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Nom <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.name || ''}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                              placeholder="Nom de la sous-catégorie"
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                                formErrors.name ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                            {formErrors.name && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
+                            )}
+                          </div>
+
+                          {/* Upload Image */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Image
+                            </label>
+                            <div className="flex gap-4">
+                              <div className="flex-1">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleImageUpload(e.target.files?.[0])}
+                                  disabled={isUploading}
+                                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                                />
+                                {isUploading && <p className="text-green-600 text-sm mt-2">📤 Upload en cours...</p>}
+                              </div>
+                              {imagePreview && (
+                                <img 
+                                  src={imagePreview} 
+                                  alt="Aperçu"
+                                  className="w-24 h-24 object-cover rounded-lg border border-gray-300"
+                                />
+                              )}
+                            </div>
+                            {formErrors.image && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.image}</p>
+                            )}
+                          </div>
+
+                          {/* Boutons Action */}
+                          <div className="flex gap-3 pt-4 border-t border-gray-200">
+                            <button
+                              onClick={handleSaveSubcategory}
+                              disabled={isUploading}
+                              className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg transition font-semibold"
+                            >
+                              <Check size={20} />
+                              Mettre à jour
+                            </button>
+                            <button
+                              onClick={resetForm}
+                              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg transition font-semibold"
+                            >
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     )}
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg text-gray-900">{sub.name}</h3>
-                      <p className="text-xs text-gray-500 mt-2">
-                        📦 {sub.products?.length || 0} produits
-                      </p>
-                    </div>
-                    <div className="flex gap-2 ml-4">
-                      <button
-                        onClick={() => openEditSubcategoryForm(sub)}
-                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteSubcategory(sub.id)}
-                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+
+                    {/* Item */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-green-500 flex gap-4">
+                      {sub.imageUrl && (
+                        <img 
+                          src={sub.imageUrl} 
+                          alt={sub.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg text-gray-900">{sub.name}</h3>
+                        <p className="text-xs text-gray-500 mt-2">
+                          📦 {sub.products?.length || 0} produits
+                        </p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <button
+                          onClick={() => openEditSubcategoryForm(sub)}
+                          className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSubcategory(sub.id)}
+                          className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -791,36 +985,175 @@ export default function AdminDashboard() {
                   </p>
                 </div>
                 {selectedSub.products?.map((product) => (
-                  <div key={product.id} className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-purple-500 flex gap-4">
-                    {product.imageUrl && (
-                      <img 
-                        src={product.imageUrl} 
-                        alt={product.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
-                        {product.featured && <span className="text-lg">📌</span>}
+                  <div key={product.id}>
+                    {/* Formulaire inline si en édition */}
+                    {editingItemId === product.id && isFormOpen && (
+                      <div className="bg-white rounded-lg shadow-md p-6 mb-3 border-l-4 border-purple-500">
+                        <div className="flex justify-between items-center mb-6">
+                          <h2 className="text-2xl font-bold text-gray-900">✏️ Modifier Produit</h2>
+                          <button
+                            onClick={resetForm}
+                            className="text-gray-500 hover:text-gray-700 p-2 hover:bg-gray-100 rounded"
+                          >
+                            <X size={24} />
+                          </button>
+                        </div>
+
+                        <div className="space-y-5">
+                          {/* Champ Nom */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Nom <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.name || ''}
+                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                              placeholder="Nom du produit"
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                formErrors.name ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                            {formErrors.name && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
+                            )}
+                          </div>
+
+                          {/* Prix et Note */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Prix (DH) <span className="text-red-500">*</span>
+                              </label>
+                              <input
+                                type="number"
+                                value={formData.price || ''}
+                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                placeholder="0.00"
+                                step="0.01"
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                  formErrors.price ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                              />
+                              {formErrors.price && (
+                                <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.price}</p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Note (0-5)
+                              </label>
+                              <input
+                                type="number"
+                                value={formData.rating || 0}
+                                onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                                placeholder="0"
+                                min="0"
+                                max="5"
+                                step="0.5"
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                  formErrors.rating ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                              />
+                              {formErrors.rating && (
+                                <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.rating}</p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Checkbox Vedette */}
+                          <label className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition">
+                            <input
+                              type="checkbox"
+                              checked={formData.featured || false}
+                              onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                              className="w-5 h-5 text-purple-600 rounded"
+                            />
+                            <span className="text-gray-800 font-medium">📌 Produit en vedette</span>
+                          </label>
+
+                          {/* Upload Image */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Image
+                            </label>
+                            <div className="flex gap-4">
+                              <div className="flex-1">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleImageUpload(e.target.files?.[0])}
+                                  disabled={isUploading}
+                                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                                />
+                                {isUploading && <p className="text-purple-600 text-sm mt-2">📤 Upload en cours...</p>}
+                              </div>
+                              {imagePreview && (
+                                <img 
+                                  src={imagePreview} 
+                                  alt="Aperçu"
+                                  className="w-24 h-24 object-cover rounded-lg border border-gray-300"
+                                />
+                              )}
+                            </div>
+                            {formErrors.image && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.image}</p>
+                            )}
+                          </div>
+
+                          {/* Boutons Action */}
+                          <div className="flex gap-3 pt-4 border-t border-gray-200">
+                            <button
+                              onClick={handleSaveProduct}
+                              disabled={isUploading}
+                              className="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg transition font-semibold"
+                            >
+                              <Check size={20} />
+                              Mettre à jour
+                            </button>
+                            <button
+                              onClick={resetForm}
+                              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg transition font-semibold"
+                            >
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">
-                        💰 {product.price} DH • ⭐ {product.rating || 0}/5
-                      </p>
-                    </div>
-                    <div className="flex gap-2 ml-4">
-                      <button
-                        onClick={() => openEditProductForm(product)}
-                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                    )}
+
+                    {/* Item */}
+                    <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-purple-500 flex gap-4">
+                      {product.imageUrl && (
+                        <img 
+                          src={product.imageUrl} 
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
+                          {product.featured && <span className="text-lg">📌</span>}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          💰 {product.price} DH • ⭐ {product.rating || 0}/5
+                        </p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <button
+                          onClick={() => openEditProductForm(product)}
+                          className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
