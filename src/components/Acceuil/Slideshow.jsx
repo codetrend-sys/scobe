@@ -5,10 +5,10 @@ import { NavLink } from "react-router-dom";
 import {informatique,imprimante,print,scolaire } from '../../images/index.jsx';
 
 const products = [
-  { id: 1, name: "Papeterie Deluxe", description: "Tout pour vos besoins en papeterie.", image: imprimante },
-  { id: 2, name: "Stylo Premium", description: "Stylos élégants pour tous vos écrits.", image: informatique },
-  { id: 3, name: "Fournitures Scolaires", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
-  { id: 15, name: "Demande de devis - Impression & Objets", description: "Devis personnalisé pour impressions (bâches, roll-up, affiches, vinyles) et objets publicitaires (stylos, mugs, clés USB).", image: print },
+  { id: 14, name: "Imprimantes & Solutions d'impression", description: "Imprimantes, toners et accessoires pour bureaux et impressions professionnelles.", image: imprimante },
+  { id: 14, name: "Ordinateurs & Accessoires", description: "Portables et PC de bureau, périphériques et composants pour usage personnel et professionnel.", image: informatique },
+  { id: 10, name: "Fournitures Scolaires", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
+  { id: 1000, name: "Demande de devis - Impression & Objets", description: "Devis personnalisé pour impressions (bâches, roll-up, affiches, vinyles) et objets publicitaires (stylos, mugs, clés USB).", image: print },
 ];
 
 export default function SlideShow() {
@@ -175,7 +175,7 @@ export default function SlideShow() {
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
                 <h3 className="text-2xl md:text-3xl font-bold mb-2 drop-shadow">{product.name}</h3>
                 <p className="text-sm md:text-base mb-4 opacity-90">{product.description}</p>
-                {product.id === 15 ? (
+                {product.id === 1000 ? (
                   <button
                     onClick={() => {
                       setModalProduct(product);
@@ -249,10 +249,10 @@ export default function SlideShow() {
                     <li>• Options de personnalisation</li>
                     <li>• Livraison rapide disponible</li>
                   </ul>
-                  <div className="mt-auto w-full">
+                  {/* <div className="mt-auto w-full">
                     <button onClick={() => window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent('Bonjour, je souhaite un devis pour '+modalProduct.name)}`, '_blank')} className="w-full mb-2 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700">Contacter via WhatsApp</button>
                     <button onClick={() => window.open(`mailto:${adminEmail}?subject=Devis%20${encodeURIComponent(modalProduct.name)}`)} className="w-full px-4 py-3 border border-gray-200 rounded-lg font-semibold hover:bg-gray-50">Envoyer un email</button>
-                  </div>
+                  </div> */}
                 </aside>
 
                 {/* Right - Formulaire */}
