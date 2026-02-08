@@ -1,19 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { useAuth } from '../../context/AuthContext';
 import { Plus, Minus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useUserAuth } from '../../context/UserAuthContext';
 
 export default function Checkout() {
   const { cartItems, updateQuantity, removeItem, clearCart } = useCart();
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
+  const { isAuthenticated, user, getUserProfile } = useUserAuth();
+
   // Shipping form state (payment is only cash on delivery)
-  const [fullname, setFullname] = useState(user?.name || '');
+  const [fullname, setFullname] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   
@@ -21,9 +22,35 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Auto-fill form when user is logged in and profile exists
+  useEffect(() => {
+    let mounted = true;
+    async function loadProfile() {
+      if (!isAuthenticated || !user) return;
+      try {
+        const profile = await getUserProfile();
+        if (!mounted) return;
+        if (profile) {
+          if (profile.full_name) setFullname(profile.full_name);
+          if (profile.address) setAddress(profile.address);
+          if (profile.city) setCity(profile.city);
+          if (profile.phone) setPhone(profile.phone);
+        }
+      } catch (err) {
+        console.error('Erreur chargement profil checkout', err);
+      }
+    }
+    loadProfile();
+    return () => { mounted = false; };
+  }, [isAuthenticated, user, getUserProfile]);
+
   const validate = () => {
-    if (!fullname || !address || !city  || !phone) {
+    if (!fullname || !address || !city || !phone) {
       setError('Veuillez remplir toutes les informations de livraison.');
+      return false;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      setError('Le téléphone doit contenir exactement 10 chiffres.');
       return false;
     }
     // No card validation: only paiement à la livraison is supported
@@ -51,6 +78,8 @@ export default function Checkout() {
     createdAt: new Date().toISOString(),
   };
 
+  
+
   // 📝 Texte lisible pour l’email
   const itemsText = order.items
     .map(
@@ -75,35 +104,39 @@ export default function Checkout() {
   formData.append('_template', 'table');
   formData.append('_captcha', 'false');
 
-  try {
-    // Enregistrer la commande dans Supabase (table: orders)
     try {
-      const { data: inserted, error: insertErr } = await supabase
-        .from('orders')
-        .insert([
-          {
-            order_id: order.id,
-            user_id: user?.id ?? null,
-            shipping: order.shipping,
-            items: order.items,
-            total: order.total,
-            status: 'pending',
-            created_at: order.createdAt,
-          },
-        ])
-        .select()
-        .single();
+      // Enregistrer la commande dans Supabase (table: orders)
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const currentUser = sessionData?.session?.user || null;
 
-      if (insertErr) {
-        console.error('Erreur insertion commande Supabase', insertErr);
-        setError(`Commande créée localement, mais échec d'enregistrement sur le serveur: ${insertErr.message || insertErr}`);
-      } else {
-        console.info('Commande enregistrée dans Supabase', inserted);
+        const { data: inserted, error: insertErr } = await supabase
+          .from('orders')
+          .insert([
+            {
+              order_id: order.id,
+              user_id: currentUser ? currentUser.id : null,
+              shipping: order.shipping,
+              items: order.items,
+              total: order.total,
+              status: 'pending',
+              created_at: order.createdAt,
+            },
+          ])
+          .select()
+          .single();
+
+        if (insertErr) {
+          console.error('Erreur insertion commande Supabase', insertErr);
+          setError(`Commande créée localement, mais échec d'enregistrement sur le serveur: ${insertErr.message || insertErr}`);
+        } else {
+          console.info('Commande enregistrée dans Supabase', inserted);
+        }
+      } catch (supErr) {
+        console.error('Erreur Supabase:', supErr);
+        setError("Impossible d'enregistrer la commande sur le serveur.");
       }
-    } catch (supErr) {
-      console.error('Erreur Supabase:', supErr);
-      setError("Impossible d'enregistrer la commande sur le serveur.");
-    }
+    
 
     // Envoi Formsubmit (email)
     const res = await fetch('https://formsubmit.co/nissrinmahan02@gmail.com', {
@@ -261,9 +294,15 @@ export default function Checkout() {
     <input
       type="tel"
       className="w-full border rounded px-3 py-2"
-      placeholder="Téléphone"
+      placeholder="Téléphone (10 chiffres)"
       value={phone}
-      onChange={e => setPhone(e.target.value)}
+      onChange={e => {
+        const value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 10) setPhone(value);
+      }}
+      maxLength="10"
+      pattern="[0-9]{10}"
+      title="Le téléphone doit contenir exactement 10 chiffres"
       required
     />
 
@@ -307,3 +346,4 @@ export default function Checkout() {
     </section>
   );
 }
+

@@ -38,6 +38,7 @@
     "globals": "^16.5.0",
     "nodemon": "^3.1.11",
     "postcss": "^8.5.6",
+    "supabase": "^2.76.3",
     "tailwindcss": "^3.4.19",
     "vite": "^7.2.4"
   }

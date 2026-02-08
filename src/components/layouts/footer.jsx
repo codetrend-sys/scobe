@@ -109,7 +109,7 @@ export function Footer() {
                   referrerPolicy="no-referrer-when-downgrade"
                 />
                 <p className="text-white font-medium mt-2">
-                  LEBRARIE TANGER SCOBE 1 - Adresse principale
+                  LIBRAIRIE TANGER SCOBE 1 - Adresse principale
                 </p>
               </div>
               
@@ -124,7 +124,7 @@ export function Footer() {
                   referrerPolicy="no-referrer-when-downgrade"
                 />
                 <p className="text-white font-medium mt-2">
-                  LEBRARIE TANGER SCOBE 2 - Adresse secondaire
+                 LIBRAIRIE TANGER SCOBE 2 - Adresse secondaire
                 </p>
               </div>
             </div>

@@ -1,80 +1,139 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, NavLink } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useUserAuth } from '../../context/UserAuthContext';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
-  const { login, register } = useAuth();
-  const [mode, setMode] = useState('login'); // or 'register'
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useUserAuth();
 
-  const from = location.state?.from || '/checkout';
-
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message] = useState(location.state?.message || '');
 
-  const validateEmail = (val) => /\S+@\S+\.\S+/.test(val);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const submit = (e) => {
+  const validateForm = () => {
+    if (!formData.email.trim()) {
+      setError("L'email est requis");
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Veuillez entrer un email valide');
+      return false;
+    }
+    if (!formData.password) {
+      setError('Le mot de passe est requis');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!email || !validateEmail(email)) { setError('Email invalide'); return; }
-    if (mode === 'register' && !name) { setError('Veuillez entrer votre nom'); return; }
-    // password not used for demo but require at least 4 chars
-    if (!password || password.length < 4) { setError('Mot de passe minimum 4 caractères'); return; }
+    if (!validateForm()) return;
 
-    if (mode === 'login') {
-      const u = login(email);
-      if (!u) {
-        setError("Aucun compte trouvé pour cet e-mail. Veuillez créer un compte.");
-        return;
+    setLoading(true);
+    const result = await login(formData.email, formData.password);
+    setLoading(false);
+
+    if (result.ok) {
+      const userEmail = result.user?.email || formData.email;
+      if (userEmail === 'admin@scobe.local') {
+        navigate('/espace-prive');
+      } else {
+        navigate('/profile');
       }
-      navigate(from);
     } else {
-      register(name, email);
-      navigate(from);
+      setError(result.error || 'Échec de la connexion');
     }
   };
 
   return (
-    <section className="max-w-md mx-auto p-6 mt-16 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4">{mode === 'login' ? 'Se connecter' : 'Créer un compte'}</h2>
-      <form onSubmit={submit} className="space-y-4">
-        {mode === 'register' && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nom</label>
-            <input value={name} onChange={e => setName(e.target.value)} className="mt-1 block w-full border rounded px-3 py-2" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-12">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Se connecter</h1>
+          <p className="text-gray-600">Accédez à vos favoris et votre panier</p>
+        </div>
+
+        {message && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <p className="text-green-700 text-sm">{message}</p>
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input value={email} onChange={e => setEmail(e.target.value)} className="mt-1 block w-full border rounded px-3 py-2" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="mt-1 block w-full border rounded px-3 py-2" />
-        </div>
-
-        <button className="w-full bg-blue-600 text-white py-2 rounded">{mode === 'login' ? 'Se connecter' : "S'inscrire"}</button>
-      </form>
-
-      {error && <div className="mt-3 text-sm text-red-600">{error}</div>}
-
-      <div className="mt-4 text-sm text-gray-600">
-        {mode === 'login' ? (
-          <>Pas de compte ? <button type="button" onClick={() => setMode('register')} className="text-blue-600">Créer un compte</button></>
-        ) : (
-          <>Vous avez déjà un compte ? <button type="button" onClick={() => setMode('login')} className="text-blue-600">Se connecter</button></>
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
         )}
-      </div>
 
-      <div className="mt-4 text-center text-sm">
-        <NavLink to="/" className="text-gray-500">Retour à l'accueil</NavLink>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+            <div className="relative">
+              <Mail size={20} className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="exemple@email.com"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-semibold text-gray-700">Mot de passe</label>
+              <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">Mot de passe oublié?</Link>
+            </div>
+            <div className="relative">
+              <Lock size={20} className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 rounded-lg transition mt-6"
+          >
+            {loading ? 'Connexion en cours...' : 'Se connecter'}
+          </button>
+        </form>
+
+        <p className="text-center text-gray-600 mt-6">
+          Vous n'avez pas de compte?{' '}
+          <Link to="/signup" className="text-blue-600 font-semibold hover:underline">S'inscrire</Link>
+        </p>
+
+        <div className="mt-4 text-center text-sm">
+          <Link to="/" className="text-gray-500">Retour à l'accueil</Link>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

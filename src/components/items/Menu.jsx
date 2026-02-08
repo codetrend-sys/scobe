@@ -7,6 +7,7 @@ import { SearchBar } from './SearchBar.jsx';
 import logo from '../../images/logo.png';
 import { useFavorites } from '../../context/FavoritesContext.jsx';
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
+import { useUserAuth } from '../../context/UserAuthContext.jsx';
 
 
 export function MobileMenu() {
@@ -19,6 +20,7 @@ export function MobileMenu() {
   const { favorites } = useFavorites();
   const favoritesCount = favorites.length;
   const { isAdminAuthenticated } = useAdminAuth();
+  const { isAuthenticated } = useUserAuth();
 
   return (
     <>
@@ -75,9 +77,9 @@ export function MobileMenu() {
                   Contact
                 </p>
               </NavLink>            
-              <NavLink to={isAdminAuthenticated ? "/espace-prive" : "/espace-prive/login"} onClick={() => setOpen(false)}>
+              <NavLink to={isAdminAuthenticated ? "/espace-prive" : (isAuthenticated ? "/profile" : "/login")} onClick={() => setOpen(false)}>
                 <p className="text-gray-700 mt-5 hover:text-blue-900 transition-colors font-medium">
-                  Espace Privé
+                  {isAdminAuthenticated ? "Espace Admin" : (isAuthenticated ? "Mon Profil" : "Se connecter")}
                 </p>
               </NavLink>
               </nav>

@@ -1,4 +1,4 @@
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useCart } from '../../context/CartContext';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase.js';
@@ -54,6 +54,8 @@ export default function ProductFeatured({ product }) {
             </div>
           )}
 
+          {/* Favorite handled by parent slider or product list; no duplicate heart here */}
+
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -101,6 +103,7 @@ export default function ProductFeatured({ product }) {
           <div className="relative overflow-hidden aspect-square">
             <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {/* Favorite handled by parent slider or product list; no duplicate heart here */}
           </div>
           <div className="p-6">
             <h3 className="text-lg font-bold text-gray-800 mt-2 mb-1 group-hover:text-blue-500 transition-colors duration-200">{p.name}</h3>

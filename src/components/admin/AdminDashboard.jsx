@@ -4,14 +4,17 @@
  * Vérifie que les changements sont bien sauvegardés dans Supabase
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCatalog } from '../../context/CatalogContext.jsx';
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
 import { supabase } from '../../lib/supabase.js';
 import { Plus, Edit2, Trash2, X, Check, LogOut, AlertCircle, CheckCircle, Upload, Image as ImageIcon } from 'lucide-react';
 import Orders from './Orders.jsx';
 
+import { useNavigate } from 'react-router-dom';
+
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const {
     categories,
     loading,
@@ -43,6 +46,11 @@ export default function AdminDashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('');
   const [editingItemId, setEditingItemId] = useState(null); // Pour l'édition inline
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+  // Users list state
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [userSearch, setUserSearch] = useState('');
 
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
   const selectedSub = selectedCategory?.subcategories.find((s) => s.id === selectedSubId);
@@ -182,6 +190,29 @@ export default function AdminDashboard() {
     setEditingItemId(null);
   };
 
+  // Fetch users from Supabase
+  const fetchUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('id, email, full_name, phone, address')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (err) {
+      console.error('Erreur fetch users:', err.message || err);
+      setUsers([]);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  // Load users when Users tab is active
+  useEffect(() => {
+    if (activeTab === 'users') fetchUsers();
+  }, [activeTab]);
+
   // ========== CATÉGORIES ==========
   const openAddCategoryForm = () => {
     setFormData({
@@ -230,9 +261,6 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteCategory = async (id) => {
-    if (!window.confirm('Êtes-vous sûr? Cela supprimera aussi toutes les sous-catégories et produits.')) {
-      return;
-    }
     try {
       await deleteCategory(id);
       showSuccess('✅ Catégorie supprimée');
@@ -242,6 +270,15 @@ export default function AdminDashboard() {
     } catch (err) {
       showError('submit', `Erreur: ${err.message}`);
     }
+  };
+
+  const openDeleteCategoryConfirm = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: '❌ Supprimer la catégorie',
+      message: 'Êtes-vous sûr? Cela supprimera aussi toutes les sous-catégories et produits.',
+      onConfirm: async () => { await handleDeleteCategory(id); }
+    });
   };
 
   // ========== SOUS-CATÉGORIES ==========
@@ -294,7 +331,6 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteSubcategory = async (id) => {
-    if (!window.confirm('Êtes-vous sûr? Cela supprimera aussi tous les produits.')) return;
     if (!selectedCategory) return;
     try {
       await deleteSubcategory(selectedCategory.id, id);
@@ -305,6 +341,15 @@ export default function AdminDashboard() {
     } catch (err) {
       showError('submit', `Erreur: ${err.message}`);
     }
+  };
+
+  const openDeleteSubcategoryConfirm = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: '❌ Supprimer la sous-catégorie',
+      message: 'Êtes-vous sûr? Cela supprimera aussi tous les produits.',
+      onConfirm: async () => { await handleDeleteSubcategory(id); }
+    });
   };
 
   // ========== PRODUITS ==========
@@ -366,7 +411,6 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm('Êtes-vous sûr?')) return;
     if (!selectedCategory || !selectedSub) return;
     try {
       await deleteProduct(selectedCategory.id, selectedSub.id, id);
@@ -376,6 +420,24 @@ export default function AdminDashboard() {
     } catch (err) {
       showError('submit', `Erreur: ${err.message}`);
     }
+  };
+
+  const openDeleteProductConfirm = (id) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: '❌ Supprimer le produit',
+      message: 'Êtes-vous sûr?',
+      onConfirm: async () => { await handleDeleteProduct(id); }
+    });
+  };
+
+  const closeConfirmDialog = () => {
+    setConfirmDialog({ isOpen: false, title: '', message: '', onConfirm: null });
+  };
+
+  const handleConfirmAction = async () => {
+    if (confirmDialog.onConfirm) await confirmDialog.onConfirm();
+    closeConfirmDialog();
   };
 
   if (loading) {
@@ -388,6 +450,25 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Confirmation Modal (réutilisable) */}
+      {confirmDialog.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div className="bg-red-50 px-6 py-4 border-b border-red-200">
+              <h2 className="text-xl font-bold text-red-700">{confirmDialog.title}</h2>
+            </div>
+            <div className="px-6 py-6">
+              <p className="text-gray-700 text-lg">{confirmDialog.message}</p>
+            </div>
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex gap-3 justify-end">
+              <button onClick={closeConfirmDialog} className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg transition font-semibold">Annuler</button>
+              <button onClick={handleConfirmAction} className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-semibold flex items-center gap-2"> 
+                <Trash2 size={18} /> Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
@@ -396,7 +477,7 @@ export default function AdminDashboard() {
             <p className="text-gray-600 mt-1">Gérez vos catégories, sous-catégories et produits</p>
           </div>
           <button
-            onClick={logout}
+              onClick={() => { logout(); navigate('/'); }}
             className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium"
           >
             <LogOut size={18} />
@@ -434,10 +515,10 @@ export default function AdminDashboard() {
         )}
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow-sm mb-6 p-1 flex gap-1">
+        <div className="bg-white rounded-lg shadow-sm mb-6 p-1 flex flex-wrap gap-1">
           <button
             onClick={() => { setActiveTab('categories'); resetForm(); setSelectedCategoryId(null); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-1 ${
               activeTab === 'categories'
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -446,8 +527,18 @@ export default function AdminDashboard() {
             📁 Catégories
           </button>
           <button
+            onClick={() => { setActiveTab('users'); resetForm(); }}
+            className={`w-full sm:flex-1 py-3 px-4 rounded-lg font-medium transition order-6 sm:order-5 ${
+              activeTab === 'users'
+                ? 'bg-blue-600 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            👥 Utilisateurs
+          </button>
+          <button
             onClick={() => { setActiveTab('subcategories'); resetForm(); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-3 sm:order-2 ${
               activeTab === 'subcategories'
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -457,7 +548,7 @@ export default function AdminDashboard() {
           </button>
           <button
             onClick={() => { setActiveTab('products'); resetForm(); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-4 sm:order-3 ${
               activeTab === 'products'
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -467,7 +558,7 @@ export default function AdminDashboard() {
           </button>
           <button
             onClick={() => { setActiveTab('orders'); resetForm(); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition ${
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-5 sm:order-4 ${
               activeTab === 'orders'
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -688,8 +779,8 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* Bouton pour ouvrir formulaire */}
-            {!isFormOpen && (
+            {/* Bouton pour ouvrir formulaire (caché sur les onglets Utilisateurs et Commandes) */}
+            {!isFormOpen && activeTab !== 'users' && activeTab !== 'orders' && (
               <button
                 onClick={
                   activeTab === 'categories' ? openAddCategoryForm :
@@ -835,7 +926,7 @@ export default function AdminDashboard() {
                           <Edit2 size={18} />
                         </button>
                         <button
-                          onClick={() => handleDeleteCategory(cat.id)}
+                          onClick={() => openDeleteCategoryConfirm(cat.id)}
                           className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
                           title="Supprimer"
                         >
@@ -964,7 +1055,7 @@ export default function AdminDashboard() {
                           <Edit2 size={18} />
                         </button>
                         <button
-                          onClick={() => handleDeleteSubcategory(sub.id)}
+                          onClick={() => openDeleteSubcategoryConfirm(sub.id)}
                           className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
                         >
                           <Trash2 size={18} />
@@ -1148,7 +1239,7 @@ export default function AdminDashboard() {
                           <Edit2 size={18} />
                         </button>
                         <button
-                          onClick={() => handleDeleteProduct(product.id)}
+                          onClick={() => openDeleteProductConfirm(product.id)}
                           className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
                         >
                           <Trash2 size={18} />
@@ -1157,6 +1248,63 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Liste des utilisateurs */}
+            {activeTab === 'users' && (
+              <div className="bg-white rounded-lg shadow-md p-3 lg:p-6 mb-6 w-full overflow-hidden">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                  <h2 className="text-lg lg:text-xl font-bold">Liste des utilisateurs</h2>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      className="border rounded px-2 lg:px-3 py-2 text-sm"
+                    />
+                    <button
+                      onClick={() => fetchUsers()}
+                      className="bg-blue-600 text-white px-2 lg:px-3 py-2 rounded text-sm whitespace-nowrap"
+                    >Refresh</button>
+                  </div>
+                </div>
+
+                {usersLoading ? (
+                  <div className="text-sm">Chargement des utilisateurs…</div>
+                ) : (
+                  <div className="overflow-x-auto -mx-3 lg:mx-0">
+                    <div className="px-3 lg:px-0">
+                      <table className="w-full text-left text-xs lg:text-sm min-w-max lg:min-w-full">
+                      <thead>
+                        <tr className="text-xs text-gray-600 border-b">
+                          <th className="py-2 px-2">Nom</th>
+                          <th className="py-2 px-2">Email</th>
+                          <th className="py-2 px-2 hidden sm:table-cell">Téléphone</th>
+                          <th className="py-2 px-2 hidden md:table-cell">Adresse</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users
+                          .filter(u => {
+                            if (!userSearch) return true;
+                            const q = userSearch.toLowerCase();
+                            return (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+                          })
+                          .map((u) => (
+                          <tr key={u.id} className="border-b text-xs sm:text-sm">
+                            <td className="py-3 px-2">{u.full_name || '—'}</td>
+                            <td className="py-3 px-2 truncate">{u.email}</td>
+                            <td className="py-3 px-2 hidden sm:table-cell">{u.phone || '—'}</td>
+                            <td className="py-3 px-2 hidden md:table-cell">{u.address || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

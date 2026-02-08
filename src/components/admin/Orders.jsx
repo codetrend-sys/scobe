@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useAlert } from '../common/AlertProvider.jsx';
 import { supabase } from '../../lib/supabase';
-import { Trash2, RefreshCw } from 'lucide-react';
+import { Trash2, RefreshCw, X } from 'lucide-react';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -8,6 +9,13 @@ export default function Orders() {
   const [updating, setUpdating] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all'); // Filter by status
   const [deleting, setDeleting] = useState(null); // Track which order is being deleted
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+  });
+  const alert = useAlert();
 
   // Statut colors mapping
   const statusColors = {
@@ -51,8 +59,18 @@ export default function Orders() {
     : orders.filter(o => (o.status || 'pending') === statusFilter);
 
   // Delete single order
-  const deleteOrder = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) return;
+  const openDeleteConfirm = (id) => {
+    const order = orders.find(o => o.id === id);
+    setConfirmDialog({
+      isOpen: true,
+      title: '❌ Supprimer la commande',
+      message: `Êtes-vous sûr de vouloir supprimer la commande #${order?.order_id?.slice(-6) || id}?`,
+      onConfirm: () => performDeleteOrder(id),
+    });
+  };
+
+  // Perform single order deletion
+  const performDeleteOrder = async (id) => {
     setDeleting(id);
     try {
       const { error } = await supabase
@@ -65,18 +83,26 @@ export default function Orders() {
       }
       console.info('Commande supprimée avec succès');
       setOrders(prev => prev.filter(o => o.id !== id));
-      alert('Commande supprimée avec succès');
     } catch (err) {
       console.error('Erreur suppression commande', err);
-      alert(`Erreur lors de la suppression: ${err.message || err}`);
+      alert.showError(`Erreur lors de la suppression: ${err.message || err}`);
     } finally {
       setDeleting(null);
     }
   };
 
   // Delete all orders
-  const clearAllOrders = async () => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer TOUTES les commandes ? Cette action est irréversible.')) return;
+  const openClearAllConfirm = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: '❌ Supprimer toutes les commandes',
+      message: 'Êtes-vous sûr de vouloir supprimer TOUTES les commandes ? Cette action est irréversible.',
+      onConfirm: performClearAllOrders,
+    });
+  };
+
+  // Perform delete all orders
+  const performClearAllOrders = async () => {
     setDeleting('all');
     try {
       const { error } = await supabase
@@ -89,10 +115,9 @@ export default function Orders() {
       }
       console.info('Toutes les commandes supprimées');
       setOrders([]);
-      alert('Toutes les commandes ont été supprimées');
     } catch (err) {
       console.error('Erreur suppression masse', err);
-      alert(`Erreur lors de la suppression: ${err.message || err}`);
+      alert.showError(`Erreur lors de la suppression: ${err.message || err}`);
     } finally {
       setDeleting(null);
     }
@@ -118,7 +143,7 @@ export default function Orders() {
       console.error('Erreur mise à jour statut', err);
       // Revert on error
       setOrders(prev => prev.map(p => p.id === id ? { ...p, status: oldStatus } : p));
-      alert(`Erreur lors de la mise à jour du statut: ${err.message || err}`);
+      alert.showError(`Erreur lors de la mise à jour du statut: ${err.message || err}`);
     } finally {
       setUpdating(null);
     }
@@ -126,8 +151,55 @@ export default function Orders() {
 
   if (loading) return <div className="p-6 bg-white rounded shadow">Chargement des commandes…</div>;
 
+  // Fonctions du modal
+  const closeConfirmDialog = () => {
+    setConfirmDialog({
+      isOpen: false,
+      title: '',
+      message: '',
+      onConfirm: null,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    if (confirmDialog.onConfirm) {
+      await confirmDialog.onConfirm();
+    }
+    closeConfirmDialog();
+  };
+
   return (
     <div className="space-y-4">
+      {/* Modal de Confirmation */}
+      {confirmDialog.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <div className="bg-red-50 px-6 py-4 border-b border-red-200">
+              <h2 className="text-xl font-bold text-red-700">{confirmDialog.title}</h2>
+            </div>
+            
+            <div className="px-6 py-6">
+              <p className="text-gray-700 text-lg">{confirmDialog.message}</p>
+            </div>
+            
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex gap-3 justify-end">
+              <button
+                onClick={closeConfirmDialog}
+                className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg transition font-semibold"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleConfirmAction}
+                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-semibold flex items-center gap-2"
+              >
+                <Trash2 size={18} />
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header avec actions */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between mb-4">
@@ -142,7 +214,7 @@ export default function Orders() {
             </button>
             {orders.length > 0 && (
               <button
-                onClick={clearAllOrders}
+                onClick={openClearAllConfirm}
                 disabled={deleting === 'all'}
                 className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white rounded-lg transition"
               >
@@ -269,7 +341,7 @@ export default function Orders() {
 
                   {/* Bouton supprimer */}
                   <button
-                    onClick={() => deleteOrder(o.id)}
+                    onClick={() => openDeleteConfirm(o.id)}
                     disabled={deleting === o.id}
                     className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white rounded-lg transition font-medium text-sm"
                   >

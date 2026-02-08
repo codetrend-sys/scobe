@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
+import { useAlert } from '../common/AlertProvider.jsx';
 import { NavLink } from "react-router-dom";
 
-import { b, p, o,informatique,imprimante,print,scolaire } from '../../images/index.jsx';
+import {informatique,imprimante,print,scolaire } from '../../images/index.jsx';
 
 const products = [
   { id: 1, name: "Papeterie Deluxe", description: "Tout pour vos besoins en papeterie.", image: imprimante },
   { id: 2, name: "Stylo Premium", description: "Stylos élégants pour tous vos écrits.", image: informatique },
   { id: 3, name: "Fournitures Scolaires", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
-  { id: 15, name: "Cahier Artistique", description: "Cahiers de qualité pour vos idées créatives.", image: print },
+  { id: 15, name: "Demande de devis - Impression & Objets", description: "Devis personnalisé pour impressions (bâches, roll-up, affiches, vinyles) et objets publicitaires (stylos, mugs, clés USB).", image: print },
 ];
 
 export default function SlideShow() {
@@ -25,12 +26,53 @@ export default function SlideShow() {
   const [message, setMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const alert = useAlert();
 
-  const quoteSubjects = [
-    'Demande générale',
-    'Personnalisation (logo/texte)',
-    'Tarif pour grande quantité',
-    'Délai de livraison',
+  // Grouped subjects for quote requests (rendered with <optgroup>)
+  const quoteSubjectGroups = [
+    {
+      label: 'Grand format',
+      options: [
+        'Impression grand format',
+        'Bâches publicitaires (PVC)',
+        'Roll-up',
+        'X-Banner',
+        'Kakémonos',
+        'Vinyle adhésif (vitrophanie, covering)',
+        'Panneaux publicitaires',
+        'Impression backlit (éclairage arrière)'
+      ]
+    },
+    {
+      label: 'Impression commerciale',
+      options: [
+        'Impression commerciale (petit & moyen format)',
+        'Cartes de visite',
+        'Flyers & brochures',
+        'Catalogues',
+        'Affiches',
+        'Stickers & étiquettes'
+      ]
+    },
+    {
+      label: 'Objets publicitaires',
+      options: [
+        'Stylos',
+        'Carnets',
+        'Mugs',
+        'Porte-clés',
+        'Clés USB personnalisées'
+      ]
+    },
+    {
+      label: 'Autres',
+      options: [
+        'Design graphique',
+        'Personnalisation (logo/texte)',
+        'Tarif pour grande quantité',
+        'Délai de livraison'
+      ]
+    }
   ];
 
   const adminEmail = 'nissrinmahan02@gmail.com';
@@ -198,7 +240,7 @@ export default function SlideShow() {
                 {/* Left - Aperçu produit */}
                 <aside className="bg-gradient-to-b from-white to-gray-50 p-4 rounded-lg flex flex-col items-center text-center">
                   <div className="w-full aspect-square rounded-lg overflow-hidden shadow-inner mb-4">
-                    <img src={modalProduct.image} alt={modalProduct.name} className="w-full h-full object-cover" />
+                    <img src={modalProduct.image} alt={modalProduct.name} className="w-full h-full object-cover object-top" />
                   </div>
                   <h4 className="font-bold text-lg text-gray-900">{modalProduct.name}</h4>
                   <p className="text-sm text-gray-600 mt-2 mb-4">{modalProduct.description}</p>
@@ -240,7 +282,7 @@ export default function SlideShow() {
                         body: formData.toString(),
                       });
 
-                      if (!emailRes.ok) throw new Error('Erreur envoi email');
+                        if (!emailRes.ok) throw new Error('Erreur envoi email');
 
                       const whatsappMessage = `🛒 Nouvelle demande de devis - ${modalProduct.name}\n👤 ${clientName} • ${clientPhone} • ${clientEmail}\nSujet: ${quoteSubject}\n\n${message}`;
                       window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
@@ -257,7 +299,7 @@ export default function SlideShow() {
                       }, 2500);
                     } catch (err) {
                       console.error('Erreur:', err);
-                      alert('Erreur lors de l\'envoi. Veuillez réessayer.');
+                      alert.showError('Erreur lors de l\'envoi. Veuillez réessayer.');
                     } finally {
                       setLoading(false);
                     }
@@ -267,7 +309,14 @@ export default function SlideShow() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Sujet</label>
                     <select value={quoteSubject} onChange={(e) => setQuoteSubject(e.target.value)} className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-200" required>
-                      {quoteSubjects.map((s) => <option key={s} value={s}>{s}</option>)}
+                      <option value="Demande générale">Demande générale</option>
+                      {quoteSubjectGroups.map((group) => (
+                        <optgroup key={group.label} label={group.label}>
+                          {group.options.map((opt) => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </optgroup>
+                      ))}
                     </select>
                   </div>
 

@@ -8,6 +8,11 @@
   transform-style: preserve-3d;
 }
 
+/* Prevent horizontal scroll caused by overflowing elements (keeps slideshow intact) */
+html, body {
+  overflow-x: hidden;
+}
+
 
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

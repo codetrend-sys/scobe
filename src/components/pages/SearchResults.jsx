@@ -4,6 +4,7 @@ import ProductDetail from '../layers/ProductDetails';
 import { Star } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useCatalog } from '../../context/CatalogContext.jsx';
+import FavoriteButton from '../common/FavoriteButton.jsx';
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -36,9 +37,12 @@ export default function SearchResults() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
         {matches.map(product => (
-          <div key={product.id} className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl cursor-pointer" onClick={() => { setSelectedProduct(product); setIsOpen(true); }}>
+          <div key={product.id} className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl cursor-pointer relative" onClick={() => { setSelectedProduct(product); setIsOpen(true); }}>
             <div className="aspect-square overflow-hidden">
               <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover"/>
+            </div>
+            <div className="absolute top-3 right-3">
+              <FavoriteButton product={product} />
             </div>
             <div className="p-4">
               <span className="text-xs font-semibold text-orange-500 uppercase">{product.category}</span>

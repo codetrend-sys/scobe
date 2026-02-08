@@ -71,7 +71,7 @@ export function CategoriesDropdown() {
       <button
         onClick={handleButtonClick}
         aria-expanded={open}
-        className="flex items-center gap-1 text-gray-700 hover:text-blue-800 font-medium transition-colors"
+        className="flex items-center gap-1 text-gray-700 hover:text-blue-800 font-medium transition-colors text-lg"
       >
         Catégories
         <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />

@@ -1,14 +1,13 @@
-import { X, Star, ShoppingCart, Truck, ShieldCheck, ChevronUp, Type, Heart } from 'lucide-react';
+import { X, Star, ShoppingCart, Truck, ShieldCheck, ChevronUp, Type } from 'lucide-react';
 import { useParams } from "react-router-dom";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useCatalog } from '../../context/CatalogContext.jsx';
 import ProductDetail from "./ProductDetails";
 import { useCart } from '../../context/CartContext';
-import { useFavorites } from '../../context/FavoritesContext';
+import FavoriteButton from '../common/FavoriteButton.jsx';
 
 export default function Product(props) {
   const { categories, loading } = useCatalog();
-  const { favorites, toggleFavorite } = useFavorites();
   const params = useParams();
   const id = props.subCategory?.id?.toString() || params.id;
 
@@ -22,7 +21,13 @@ export default function Product(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortAlpha, setSortAlpha] = useState(false);
   const [sortPrice, setSortPrice] = useState(null); // null, 'asc', 'desc'
-  // const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+  }, [currentPage]);
 
   const itemsPerPage = 10;
 
@@ -52,13 +57,6 @@ export default function Product(props) {
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentProducts = sortedProducts.slice(indexOfFirst, indexOfLast);
   
-
-  useEffect(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-  }, [currentPage]);
 
   const goToPrevious = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
   const goToNext = () => { if (currentPage < totalPages) setCurrentPage(currentPage + 1); };
@@ -153,17 +151,10 @@ export default function Product(props) {
                   />
                 </div>
 
-                {/* Icône favoris */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); toggleFavorite(product); }}
-                  className="absolute rounded-full  p-1 top-3 right-3 text-gray-300 hover:text-red-500 transition-all duration-300"
-                >
-                  <Heart
-                    className={`w-8 h-6   text-black  transition-transform duration-300 ${
-                      favorites.some(p => p.id === product.id) ? 'fill-red-500 scale-125  rounded-full' : ''
-                    }`}
-                  />
-                </button>
+                {/* Icône favoris (composant partagé) */}
+                <div className="absolute top-3 right-3">
+                  <FavoriteButton product={product} />
+                </div>
 
                 <div className="p-4">
                   <span className="text-xs font-semibold text-orange-500 uppercase">
