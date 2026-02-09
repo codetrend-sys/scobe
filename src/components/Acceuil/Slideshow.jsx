@@ -156,7 +156,7 @@ export default function SlideShow() {
         {products.map((product, index) => (
           <div
             key={product.id}
-            className="absolute inset-0 w-full max-w-md mx-auto transition-all duration-700 ease-out cursor-grab active:cursor-grabbing"
+            className="absolute inset-0 w-full sm:max-w-sm md:max-w-lg lg:max-w-xl mx-auto transition-all duration-700 ease-out cursor-grab active:cursor-grabbing"
             style={{
               ...getTransformForSlide(index),
               transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",

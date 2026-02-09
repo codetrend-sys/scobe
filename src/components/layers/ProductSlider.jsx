@@ -111,9 +111,26 @@ export function ProductSlider({ products }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [itemsPerView, setItemsPerView] = useState(3);
   const sliderRef = useRef(null);
 
-  const itemsPerView = 3;
+  // Responsive items per view
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsPerView(1); // Mobile
+      } else if (window.innerWidth < 1024) {
+        setItemsPerView(2); // Tablet
+      } else {
+        setItemsPerView(3); // Desktop
+      }
+    };
+
+    handleResize(); // Initial value
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const maxIndex = Math.max(0, products.length - itemsPerView);
 
   // 🔄 Auto slide
