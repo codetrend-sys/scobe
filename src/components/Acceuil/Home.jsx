@@ -5,6 +5,8 @@ import SlideShow from './Slideshow.jsx';
 import { Sparkles, BookOpen } from 'lucide-react';
 import { ProductSlider } from '../layers/ProductSlider.jsx';
 import ContactPremium from '../pages/Contact.jsx';
+import logo from '../../images/logo.png'
+
 
 export default function Home() {
   const { categories, loading } = useCatalog();
@@ -26,7 +28,8 @@ export default function Home() {
             <div className="absolute -left-28 -top-20 w-72 h-72 bg-gradient-to-br from-blue-100 to-amber-100 opacity-40 rounded-full blur-3xl pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
               <div className="shrink-0 flex items-center justify-center w-28 h-28 md:w-40 md:h-40 bg-gradient-to-br from-white to-blue-50 rounded-lg border border-white/40 shadow-inner">
-                <BookOpen className="w-14 h-14 text-blue-600" />
+                {/* <BookOpen className="w-14 h-14 text-blue-600" /> */}
+                <img src={logo} className="w-22 h-20 text-blue-600" />
               </div>
 
               <div className="flex-1 text-center md:text-left">
@@ -35,8 +38,10 @@ export default function Home() {
                   <div className="flex items-center text-sm text-gray-500 gap-1"><Sparkles className="w-4 h-4" />Bienvenue</div>
                 </div>
 
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900">Bienvenue sur <span className="text-blue-600">LIBRAIRIE TANGER SCOBE</span></h1>
-                <p className="mt-2 text-gray-600 max-w-2xl mx-auto md:mx-0">Votre boutique locale pour papeterie, impressions et objets publicitaires — qualité professionnelle et service personnalisé à Tanger.</p>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900">Bienvenue Chez <span className="text-blue-600">LIBRAIRIE TANGER SCOBE</span></h1>
+                <p className="mt-2 text-gray-600 max-w-2xl mx-auto md:mx-0">Trouvez vos fournitures scolaires et articles de bureau au meilleur prix, pour tous les niveaux.
+                  Qualité, choix et disponibilité immédiate <br/>  <br/></p>
+                <p className="text-green-600 text-md font-bold">Tout pour réussir, au même endroit !</p>
 
                 <div className="mt-4 flex items-center justify-center md:justify-start gap-3">
                   <button onClick={() => { const el = document.getElementById('categories'); if(el) el.scrollIntoView({ behavior: 'smooth' }); }} className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full font-semibold shadow-lg transform hover:-translate-y-0.5 transition">Voir les catégories</button>

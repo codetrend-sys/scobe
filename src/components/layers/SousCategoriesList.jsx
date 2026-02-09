@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import Product from "./Product.jsx";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useCatalog } from '../../context/CatalogContext.jsx';
 
 export default function SousCategorieCard() {
@@ -9,6 +9,19 @@ export default function SousCategorieCard() {
   const category = categories.find(cat => String(cat.id) === String(id));
 
   const [selectedCat, setSelectedCat] = useState(null); // stocke la sous-catégorie sélectionnée
+  const productsRef = useRef(null); // référence pour le scroll
+
+  // Scroll automatique vers les produits quand une sous-catégorie est sélectionnée
+  useEffect(() => {
+    if (selectedCat && productsRef.current) {
+      setTimeout(() => {
+        productsRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 0);
+    }
+  }, [selectedCat]);
 
   if (loading) return <p className="text-center py-20">Chargement...</p>;
   if (!category) return <p className="text-center py-20">Catégorie introuvable</p>;
@@ -51,7 +64,7 @@ export default function SousCategorieCard() {
 
       {/* --- PRODUITS DE LA SOUS-CATEGORIE SELECTIONNEE --- */}
       {selectedCat && (
-        <div className="mt-16 ">
+        <div ref={productsRef} className="mt-16 ">
           <Product subCategory={selectedCat} />
         </div>
       )}

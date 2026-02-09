@@ -139,7 +139,7 @@ export default function Checkout() {
     
 
     // Envoi Formsubmit (email)
-    const res = await fetch('https://formsubmit.co/nissrinmahan02@gmail.com', {
+    const res = await fetch('https://formsubmit.co/scobelibrairietanger@gmail.com', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -174,7 +174,7 @@ export default function Checkout() {
   }
 
   const sendToWhatsApp = (order) => {
-  const phoneNumber = "212693393610"; //
+  const phoneNumber = "212661655137"; //
 
   const itemsText = order.items
     .map(

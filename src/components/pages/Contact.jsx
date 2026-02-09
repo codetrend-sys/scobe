@@ -41,7 +41,7 @@ export default function ContactPremium() {
 
   try {
     const res = await fetch(
-      'https://formsubmit.co/nissrinmahan02@gmail.com',
+      'https://formsubmit.co/scobelibrairietanger@gmail.com',
       {
         method: 'POST',
         headers: {

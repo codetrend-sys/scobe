@@ -75,8 +75,8 @@ export default function SlideShow() {
     }
   ];
 
-  const adminEmail = 'nissrinmahan02@gmail.com';
-  const adminPhone = '212693393610';
+  const adminEmail = 'scobelibrairietanger@gmail.com';
+  const adminPhone = '212661655137';
 
   // Gestion de l'auto-play
   useEffect(() => {

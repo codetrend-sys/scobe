@@ -24,7 +24,7 @@ export const botFlows = {
   },
 
   frais: {
-    message: "💸 Les frais de livraison sont de 30 MAD.",
+    message: "📦 La livraison est Gratuite.",
     options: [{ label: "⬅ Retour", next: "livraison" }],
   },
 
@@ -39,7 +39,7 @@ export const botFlows = {
   },
 
   contact: {
-    message: "📞 Appelez-nous au 06 00 00 00 00.",
+    message: "📞 Appelez-nous au 06 61 65 51 37.\n📩 Écrivez-nous à tout moment scobelibrairietanger@gmail.com",
     options: [{ label: "⬅ Menu principal", next: "start" }],
   },
 };

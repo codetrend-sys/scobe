@@ -27,8 +27,32 @@ serve(async (req) => {
       )
     }
 
+    // Validation de l'email (format basique)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return new Response(
+        JSON.stringify({ error: "Format d'email invalide" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      )
+    }
+
+    // Validation du code (6 chiffres)
+    if (!/^\d{6}$/.test(code)) {
+      return new Response(
+        JSON.stringify({ error: "Code invalide" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      )
+    }
+
     // Option 1: Using Resend (Recommended - Free tier available)
     const resendApiKey = Deno.env.get("RESEND_API_KEY")
+    const emailFrom = Deno.env.get("EMAIL_FROM") || "noreply@scobe.fr" // Domaine personnalisé configuré dans Resend
     
     if (resendApiKey) {
       const response = await fetch("https://api.resend.com/emails", {
@@ -38,7 +62,7 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "onboarding@resend.dev",
+          from: emailFrom,
           to: email,
           subject: "Réinitialisez votre mot de passe Scobe",
           html: `

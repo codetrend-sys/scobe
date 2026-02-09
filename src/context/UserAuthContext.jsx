@@ -142,17 +142,43 @@ export function UserAuthProvider({ children }) {
   const requestPasswordReset = async (email) => {
     try {
       setError(null);
-      
+
+      // Validation de l'email
+      if (!email || !email.includes('@')) {
+        return { ok: false, error: 'Email invalide' };
+      }
+
+      const normalizedEmail = email.toLowerCase().trim();
+
+      // Rate limiting: vérifier les tentatives précédentes (dernière 15 min)
+      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60000).toISOString();
+      const { data: recentAttempts, error: checkError } = await supabase
+        .from('password_reset_codes')
+        .select('id', { count: 'exact' })
+        .eq('email', normalizedEmail)
+        .gt('created_at', fifteenMinutesAgo)
+        .is('used', false);
+
+      if (checkError) throw checkError;
+
+      // Limiter à 3 tentatives par 15 minutes
+      if (recentAttempts && recentAttempts.length >= 3) {
+        return { 
+          ok: false, 
+          error: 'Trop de tentatives. Veuillez réessayer dans 15 minutes.' 
+        };
+      }
+
       // Générer un code aléatoire de 6 chiffres
       const code = Math.floor(100000 + Math.random() * 900000).toString();
-      const expiresAt = new Date(Date.now() + 120 * 60000); // Expire dans 2 HEURES (pour tests avec timezone)
+      const expiresAt = new Date(Date.now() + 15 * 60000); // Expire dans 15 minutes
       
       // Insérer le code dans la table
       const { error: insertError } = await supabase
         .from('password_reset_codes')
         .insert([
           {
-            email: email.toLowerCase(),
+            email: normalizedEmail,
             code,
             expires_at: expiresAt.toISOString(),
           },
@@ -165,7 +191,7 @@ export function UserAuthProvider({ children }) {
         const { data: functionData, error: functionError } = await supabase.functions.invoke(
           'send-reset-code',
           {
-            body: { email: email.toLowerCase(), code },
+            body: { email: normalizedEmail, code },
           }
         );
 

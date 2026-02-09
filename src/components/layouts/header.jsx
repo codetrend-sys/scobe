@@ -24,9 +24,9 @@ export function Header() {
   const cartCount = cartItems.length;
   return (
     <header className="sticky top-0 z-50 bg-white/25 backdrop-blur-md shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ml-20 mr-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ml-20 mr-10">
         <div className="flex items-center justify-between h-28">
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6">
 
             {/* menu */}
             {/* <button className="lg:hidden p-2 hover:bg-gray-200 rounded-lg transition-colors">
@@ -43,7 +43,7 @@ export function Header() {
             </NavLink>
 
             {/* navigation */}
-            <nav className="hidden lg:flex items-center gap-9 ml-16">
+            <nav className="hidden lg:flex items-center gap-6 ml-10">
               <NavLink to={`/`}>
               <p  className="text-gray-700 hover:text-blue-900 transition-colors font-medium text-lg">
                 Accueil

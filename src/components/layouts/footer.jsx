@@ -35,7 +35,7 @@ export function Footer() {
               <a href="https://wa.me/212661655137" target='_blank' className="p-2 text-green-600 rounded-lg hover:bg-green-500 hover:text-white transition-colors">
                 <FaWhatsapp className="w-8 h-8 " />
               </a>
-              <a href="#" className="p-2 text-green-600 rounded-lg hover:bg-white hover:text-red-500  transition-colors">
+              <a href="mailto:contact@librairiescobetanger.com" className="p-2 text-green-600 rounded-lg hover:bg-white hover:text-red-500  transition-colors">
                 <Mail className="w-8 h-8 " />
               </a>
               <a href="tel:+212539386065" className="p-2 text-green-600 rounded-lg hover:bg-blue-700 hover:text-white  transition-colors">
@@ -131,7 +131,8 @@ export function Footer() {
           </div>
         {/* COPYRIGHT */}
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
-          <p>&copy; 2026 Scope. Tous droits réservés.</p>
+          <p>&copy; 2026 Scobe. Tous droits réservés.</p><br/>
+          <p>Développé par <span className="font-bold text-blue-900 text-md bg-blue-300  rounded-md px-1 py-1 transform transition duration-300 hover:scale-105 hover:shadow-lg animate-pulse"><a href="https://www.thecodetrend.com/fr" target='_blank'>Code Trend Agency</a> </span></p>
         </div>
       </div>
     </footer>
