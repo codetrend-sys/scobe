@@ -5,6 +5,7 @@ import { useCatalog } from '../../context/CatalogContext.jsx';
 import ProductDetail from "./ProductDetails";
 import { useCart } from '../../context/CartContext';
 import FavoriteButton from '../common/FavoriteButton.jsx';
+import ScrollToTopButton from '../items/ScrollToTopButton.jsx';
 
 export default function Product(props) {
   const { categories, loading } = useCatalog();
@@ -234,6 +235,7 @@ export default function Product(props) {
         onClose={() => setIsOpen(false)}
         onAddToCart={(p) => { addToCart(p, 1); }}
       />
+      <ScrollToTopButton />
     </>
   );
 }

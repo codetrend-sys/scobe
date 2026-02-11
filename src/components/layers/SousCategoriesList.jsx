@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import Product from "./Product.jsx";
 import { useState, useRef, useEffect } from "react";
 import { useCatalog } from '../../context/CatalogContext.jsx';
+import ScrollToTopButton from '../items/ScrollToTopButton.jsx';
 
 export default function SousCategorieCard() {
   const { id } = useParams(); // id de la catégorie
@@ -68,6 +69,7 @@ export default function SousCategorieCard() {
           <Product subCategory={selectedCat} />
         </div>
       )}
+      <ScrollToTopButton />
     </section>
   );
 }

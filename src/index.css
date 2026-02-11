@@ -9,7 +9,7 @@
 }
 
 /* Prevent horizontal scroll caused by overflowing elements (keeps slideshow intact) */
-html, body {
+html {
   overflow-x: hidden;
 }
 

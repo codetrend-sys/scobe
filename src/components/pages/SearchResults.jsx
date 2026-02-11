@@ -5,6 +5,7 @@ import { Star } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useCatalog } from '../../context/CatalogContext.jsx';
 import FavoriteButton from '../common/FavoriteButton.jsx';
+import ScrollToTopButton from '../items/ScrollToTopButton.jsx';
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -66,6 +67,7 @@ export default function SearchResults() {
       </div>
 
       <ProductDetail product={selectedProduct} isOpen={isOpen} onClose={() => setIsOpen(false)} onAddToCart={(p) => addToCart(p,1)} />
+      <ScrollToTopButton />
     </section>
   );
 }

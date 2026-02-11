@@ -125,7 +125,7 @@ export default function SlideShow() {
 
   return (
     <div
-      className="w-full max-w-6xl mx-auto py-16 px-4 relative"
+      className="w-full max-w-6xl mx-auto py-0 px-4 relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-live="polite"
