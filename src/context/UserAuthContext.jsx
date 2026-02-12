@@ -121,179 +121,27 @@ export function UserAuthProvider({ children }) {
     }
   };
 
-  // Changer le mot de passe
-  const changePassword = async (newPassword) => {
-    try {
-      setError(null);
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-
-      if (updateError) throw updateError;
-      return { ok: true };
-    } catch (err) {
-      const errorMessage = err.message || 'Erreur lors du changement de mot de passe';
-      setError(errorMessage);
-      return { ok: false, error: errorMessage };
-    }
+  // changePassword removed
+  const changePassword = async (_newPassword) => {
+    return { ok: false, error: 'Feature removed' };
   };
 
-  // Demander réinitialisation du mot de passe avec code
-  const requestPasswordReset = async (email) => {
-    try {
-      setError(null);
-
-      // Validation de l'email
-      if (!email || !email.includes('@')) {
-        return { ok: false, error: 'Email invalide' };
-      }
-
-      const normalizedEmail = email.toLowerCase().trim();
-
-      // Rate limiting: vérifier les tentatives précédentes (dernière 15 min)
-      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60000).toISOString();
-      const { data: recentAttempts, error: checkError } = await supabase
-        .from('password_reset_codes')
-        .select('id', { count: 'exact' })
-        .eq('email', normalizedEmail)
-        .gt('created_at', fifteenMinutesAgo)
-        .is('used', false);
-
-      if (checkError) throw checkError;
-
-      // Limiter à 3 tentatives par 15 minutes
-      if (recentAttempts && recentAttempts.length >= 3) {
-        return { 
-          ok: false, 
-          error: 'Trop de tentatives. Veuillez réessayer dans 15 minutes.' 
-        };
-      }
-
-      // Générer un code aléatoire de 6 chiffres
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      const expiresAt = new Date(Date.now() + 15 * 60000); // Expire dans 15 minutes
-      
-      // Insérer le code dans la table
-      const { error: insertError } = await supabase
-        .from('password_reset_codes')
-        .insert([
-          {
-            email: normalizedEmail,
-            code,
-            expires_at: expiresAt.toISOString(),
-          },
-        ]);
-
-      if (insertError) throw insertError;
-
-      // Envoyer l'email avec le code via Supabase Edge Function
-      try {
-        const { data: functionData, error: functionError } = await supabase.functions.invoke(
-          'send-reset-code',
-          {
-            body: { email: normalizedEmail, code },
-          }
-        );
-
-        if (functionError) {
-          console.warn('Erreur lors de l\'envoi d\'email:', functionError);
-          // Continuer même si l'email échoue (la base de données est à jour)
-        } else {
-          // email envoyé (info suppressed)
-        }
-      } catch (emailError) {
-        console.warn('Erreur lors de l\'appel à la fonction Edge:', emailError);
-        // Continuer même si l'email échoue
-      }
-
-      return { ok: true, message: 'Un code a été envoyé à votre email' };
-    } catch (err) {
-      const errorMessage = err.message || 'Erreur lors de la demande de réinitialisation';
-      setError(errorMessage);
-      return { ok: false, error: errorMessage };
-    }
+  // Password reset functionality removed.
+  // These stubs remain to avoid breaking callers; they return a consistent error.
+  const requestPasswordReset = async (_email) => {
+    return { ok: false, error: 'Feature removed' };
   };
 
-  // Vérifier le code de réinitialisation
-  const verifyResetCode = async (email, code) => {
-    try {
-      setError(null);
-      
-      const { data, error: selectError } = await supabase
-        .from('password_reset_codes')
-        .select('id, expires_at, used')
-        .eq('email', email.toLowerCase())
-        .eq('code', code)
-        .single();
-
-      if (selectError) {
-        if (selectError.code === 'PGRST116') {
-          throw new Error('Code invalide');
-        }
-        throw selectError;
-      }
-
-      if (data.used) {
-        throw new Error('Ce code a déjà été utilisé');
-      }
-
-      // Vérifier l'expiration en comparant les timestamps directement (ignorant timezone)
-      const expiresAtMs = new Date(data.expires_at).getTime();
-      const nowMs = Date.now();
-      
-      // debug info removed
-      
-      if (expiresAtMs < nowMs) {
-        throw new Error(`Ce code a expiré (expire à ${new Date(expiresAtMs).toLocaleTimeString()})`);
-      }
-
-      return { ok: true };
-    } catch (err) {
-      const errorMessage = err.message || 'Erreur lors de la vérification du code';
-      setError(errorMessage);
-      return { ok: false, error: errorMessage };
-    }
+  const verifyResetCode = async (_email, _code) => {
+    return { ok: false, error: 'Feature removed' };
   };
 
-  // Réinitialiser le mot de passe avec le code
-  const resetPasswordWithCode = async (email, code, newPassword) => {
-    try {
-      setError(null);
-
-      // Appeler la Edge Function pour réinitialiser le mot de passe
-      const { data, error } = await supabase.functions.invoke('reset-password', {
-        body: {
-          email: email.toLowerCase(),
-          code,
-          newPassword,
-        },
-      });
-
-      if (error) {
-        console.error('Edge Function Error:', error);
-        throw new Error(error.message || 'Erreur lors de la réinitialisation du mot de passe');
-      }
-
-      if (!data?.ok) {
-        throw new Error(data?.error || 'Erreur inconnue');
-      }
-
-      // password reset successful (info suppressed)
-
-      return { 
-        ok: true, 
-        message: 'Mot de passe réinitialisé avec succès. Veuillez vous connecter.' 
-      };
-    } catch (err) {
-      const errorMessage = err.message || 'Erreur lors de la réinitialisation du mot de passe';
-      setError(errorMessage);
-      return { ok: false, error: errorMessage };
-    }
+  const resetPasswordWithCode = async (_email, _code, _newPassword) => {
+    return { ok: false, error: 'Feature removed' };
   };
 
-  // Ancienne fonction resetPassword (conservée pour compatibilité)
-  const resetPassword = async (email) => {
-    return requestPasswordReset(email);
+  const resetPassword = async (_email) => {
+    return { ok: false, error: 'Feature removed' };
   };
 
   // Récupérer le profil utilisateur
@@ -325,11 +173,7 @@ export function UserAuthProvider({ children }) {
         signup,
         login,
         logout,
-        changePassword,
-        resetPassword,
-        requestPasswordReset,
-        verifyResetCode,
-        resetPasswordWithCode,
+        // changePassword intentionally removed from public API
         getUserProfile,
       }}
     >

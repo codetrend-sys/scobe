@@ -8,6 +8,7 @@ import FavoriteButton from '../common/FavoriteButton.jsx';
 import ScrollToTopButton from '../items/ScrollToTopButton.jsx';
 
 export default function Product(props) {
+  const { hideScrollButton = false } = props;
   const { categories, loading } = useCatalog();
   const params = useParams();
   const id = props.subCategory?.id?.toString() || params.id;
@@ -235,7 +236,7 @@ export default function Product(props) {
         onClose={() => setIsOpen(false)}
         onAddToCart={(p) => { addToCart(p, 1); }}
       />
-      <ScrollToTopButton />
+      {!hideScrollButton && <ScrollToTopButton />}
     </>
   );
 }

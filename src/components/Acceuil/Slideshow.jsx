@@ -11,9 +11,10 @@ const products = [
   { id: 1000, name: "Demande de devis - Impression & Objets", description: "Devis personnalisé pour impressions (bâches, roll-up, affiches, vinyles) et objets publicitaires (stylos, mugs, clés USB).", image: print },
 ];
 
-export default function SlideShow() {
+export default function SlideShow({ isPaused: externalIsPaused }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const autoPlayRef = useRef(null);
   const totalSlides = products.length;
   // Modal Devis
@@ -78,20 +79,31 @@ export default function SlideShow() {
   const adminEmail = 'scobelibrairietanger@gmail.com';
   const adminPhone = '212661655137';
 
+  // Détecter changement de taille d'écran
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Gestion de l'auto-play
   useEffect(() => {
-    if (!isHovered) {
-      autoPlayRef.current = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % totalSlides);
-      }, 2000);
-    } else {
-      autoPlayRef.current = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % totalSlides);
-      }, 6000);
+    // Pauser complètement si on est en train de scroller sur mobile
+    if (externalIsPaused) {
+      return () => clearInterval(autoPlayRef.current);
     }
 
+    // Sinon, déterminer la vitesse
+    const delay = isHovered ? 6000 : 2000;
+
+    autoPlayRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % totalSlides);
+    }, delay);
+
     return () => clearInterval(autoPlayRef.current);
-  }, [isHovered, totalSlides]);
+  }, [isHovered, externalIsPaused, totalSlides]);
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
@@ -125,7 +137,7 @@ export default function SlideShow() {
 
   return (
     <div
-      className="w-full max-w-6xl mx-auto py-0 px-4 relative"
+      className="w-full max-w-6xl mx-auto py-0 px-4 relative "
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-live="polite"
@@ -151,8 +163,8 @@ export default function SlideShow() {
         </svg>
       </button>
 
-      {/* Conteneur des slides */}
-      <div className="relative h-[500px] md:h-[550px] overflow-visible perspective-1000">
+      {/* Conteneur des slides - clipping sur mobile uniquement */}
+      <div className="relative h-[500px] md:h-[550px] perspective-1000" style={{clipPath: isMobile ? 'inset(0)' : 'none', overflow: isMobile ? 'hidden' : 'visible'}}>
         {products.map((product, index) => (
           <div
             key={product.id}

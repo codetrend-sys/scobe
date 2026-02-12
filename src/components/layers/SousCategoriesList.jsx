@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import Product from "./Product.jsx";
 import { useState, useRef, useEffect } from "react";
 import { useCatalog } from '../../context/CatalogContext.jsx';
-import ScrollToTopButton from '../items/ScrollToTopButton.jsx';
+import { ChevronUp } from 'lucide-react';
 
 export default function SousCategorieCard() {
   const { id } = useParams(); // id de la catégorie
@@ -11,6 +11,52 @@ export default function SousCategorieCard() {
 
   const [selectedCat, setSelectedCat] = useState(null); // stocke la sous-catégorie sélectionnée
   const productsRef = useRef(null); // référence pour le scroll
+
+  // trouve l'ancêtre scrollable le plus proche d'un élément
+  const findScrollableAncestor = (el) => {
+    let node = el;
+    while (node && node !== document.body) {
+      try {
+        const style = window.getComputedStyle(node);
+        if (node.scrollHeight > node.clientHeight && (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflow === 'auto' || style.overflow === 'scroll')) {
+          return node;
+        }
+      } catch (e) {}
+      node = node.parentNode;
+    }
+    return window;
+  };
+
+  const handleLocalScrollToTop = () => {
+    try {
+      // Primary: scroll the nearest scrollable ancestor
+      const primary = productsRef.current ? findScrollableAncestor(productsRef.current) : window;
+      console.log('localScrollToTop primary container:', primary === window ? 'window' : primary);
+      if (primary === window) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        primary.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => { primary.scrollTop = 0; }, 150);
+      }
+
+      // Aggressive fallback: also scroll any scrollable ancestors up to body
+      let node = productsRef.current || document.body;
+      while (node && node !== document.body) {
+        try {
+          if (node.scrollHeight > node.clientHeight) {
+            try { node.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { node.scrollTop = 0; }
+          }
+        } catch (e) {}
+        node = node.parentNode;
+      }
+
+      // Final fallback: ensure window at top
+      setTimeout(() => { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 250);
+    } catch (e) {
+      console.error('handleLocalScrollToTop error', e);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // Scroll automatique vers les produits quand une sous-catégorie est sélectionnée
   useEffect(() => {
@@ -66,10 +112,21 @@ export default function SousCategorieCard() {
       {/* --- PRODUITS DE LA SOUS-CATEGORIE SELECTIONNEE --- */}
       {selectedCat && (
         <div ref={productsRef} className="mt-16 ">
-          <Product subCategory={selectedCat} />
+          <Product subCategory={selectedCat} hideScrollButton={true} />
         </div>
       )}
-      <ScrollToTopButton />
+
+      {/* Always-visible local scroll-to-top for subcategory selection (prevents flicker) */}
+      {selectedCat && (
+        <button
+          onClick={handleLocalScrollToTop}
+          aria-label="Remonter en haut"
+          title="Remonter en haut"
+          className="fixed bottom-24 right-7 bg-blue-300 hover:bg-blue-700 text-white rounded-full p-3 shadow-2xl transition-all duration-300 z-[70] pointer-events-auto"
+        >
+          <ChevronUp className="w-6 h-6" />
+        </button>
+      )}
     </section>
   );
 }

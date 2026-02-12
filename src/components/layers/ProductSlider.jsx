@@ -105,7 +105,7 @@ import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
 import ProductFeatured from "../layers/ProductFeatured.jsx";
 import { useFavorites } from '../../context/FavoritesContext';
 
-export function ProductSlider({ products }) {
+export function ProductSlider({ products, isPaused: externalIsPaused }) {
   const { favorites, toggleFavorite, isFavorite } = useFavorites(); // <-- context favoris
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -113,6 +113,15 @@ export function ProductSlider({ products }) {
   const [showPopup, setShowPopup] = useState(false);
   const [itemsPerView, setItemsPerView] = useState(3);
   const sliderRef = useRef(null);
+
+  // Respecter la pause externe (scroll mobile)
+  useEffect(() => {
+    if (externalIsPaused) {
+      setIsPaused(true);
+    } else {
+      setIsPaused(false);
+    }
+  }, [externalIsPaused]);
 
   // Responsive items per view
   useEffect(() => {

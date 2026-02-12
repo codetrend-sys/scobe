@@ -23,22 +23,20 @@ export function Header() {
   // Show number of distinct products (length) instead of total quantity
   const cartCount = cartItems.length;
   return (
-    <header className="sticky top-0 z-50 bg-white/25 backdrop-blur-md shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ml-20 mr-10">
-        <div className="flex items-center justify-between h-28">
-          <div className="flex items-center gap-6">
-
-            {/* menu */}
-            {/* <button className="lg:hidden p-2 hover:bg-gray-200 rounded-lg transition-colors">
-              <Menu className="w-6 h-6" />
-            </button> */}
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/25 backdrop-blur-md shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6  lg:px-8 lg:ml-20 mr-10">
+          <div className="flex items-center justify-between h-28">
+          <div className="flex lg:hidden items-center">
+            {/* menu mobile */}
             <MobileMenu/>
+          </div>
 
+          <div className="flex-1 flex items-center justify-center lg:justify-start lg:ml-0 lg:gap-6">
             {/* logo */}
-            
             <NavLink to={`/`}>
             <div className=" flex items-center justify-center ">
-                <img src={logo} alt="" className='w-17 h-20 mb-2' />   
+                <img src={logo} alt="" className='w-17 h-20 mb-2 ' />   
             </div>
             </NavLink>
 
@@ -101,7 +99,10 @@ export function Header() {
             </button> */}
           </div>
         </div>
-      </div>
-    </header>
+        </div>
+      </header>
+      {/* spacer to prevent content being hidden under fixed header */}
+      <div className="h-28" aria-hidden="true" />
+    </>
   );
 }

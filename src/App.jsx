@@ -10,8 +10,7 @@ import Checkout from './components/pages/Checkout.jsx';
 import OrderConfirmation from './components/pages/OrderConfirmation.jsx';
 import Login from './components/pages/Login.jsx';
 import SignUp from './components/pages/SignUp.jsx';
-import ChangePassword from './components/pages/ChangePassword.jsx';
-import ForgotPassword from './components/pages/ForgotPassword.jsx';
+// ChangePassword flow removed
 import Profile from './components/pages/Profile.jsx';
 import SearchResults from './components/pages/SearchResults.jsx';
 import CartPage from './components/pages/CartPage.jsx';
@@ -51,7 +50,6 @@ function App() {
                   <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/cart" element={<CartPage />} />
                     <Route path="/search" element={<SearchResults />} />
@@ -68,14 +66,7 @@ function App() {
                         </RequireUserAuth>
                       }
                     />
-                    <Route
-                      path="/change-password"
-                      element={
-                        <RequireUserAuth>
-                          <ChangePassword />
-                        </RequireUserAuth>
-                      }
-                    />
+                    {/* change-password route removed */}
                     <Route path="/" element={<Home />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/admin/login" element={<Navigate to="/espace-prive/login" replace />} />

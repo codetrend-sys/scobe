@@ -8,8 +8,16 @@
   transform-style: preserve-3d;
 }
 
-/* Prevent horizontal scroll caused by overflowing elements (keeps slideshow intact) */
-html {
+/* Fix layout shift on mobile - prevent overflow and scroll jank */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
   overflow-x: hidden;
 }
 

@@ -67,7 +67,7 @@ export default function SearchResults() {
       </div>
 
       <ProductDetail product={selectedProduct} isOpen={isOpen} onClose={() => setIsOpen(false)} onAddToCart={(p) => addToCart(p,1)} />
-      <ScrollToTopButton />
+      <ScrollToTopButton minScroll={100} />
     </section>
   );
 }

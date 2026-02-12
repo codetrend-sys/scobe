@@ -6,21 +6,47 @@ import { Sparkles, BookOpen } from 'lucide-react';
 import { ProductSlider } from '../layers/ProductSlider.jsx';
 import ContactPremium from '../pages/Contact.jsx';
 import logo from '../../images/logo.png'
+import { useRef, useEffect, useState } from 'react';
 
 
 export default function Home() {
   const { categories, loading } = useCatalog();
+  const [isMobileScrolling, setIsMobileScrolling] = useState(false);
+  const scrollTimeoutRef = useRef(null);
   
   const featuredProducts = (categories || [])
   .flatMap(category => category.subcategories)   // toutes les sous-catégories
   .flatMap(sub => sub.products)                  // tous les produits
   .filter(product => product.featured === true); // seulement les featured
 
+  // Bloquer tous les sliders pendant le scroll inertiel sur mobile
+  useEffect(() => {
+    const handleTouchStart = () => {
+      setIsMobileScrolling(true);
+      clearTimeout(scrollTimeoutRef.current);
+    };
+
+    const handleTouchEnd = () => {
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsMobileScrolling(false);
+      }, 1200);
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+      clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
+
   if (loading) return <div className="text-center py-16">Chargement...</div>;
 
     return (
         <>
-        <SlideShow/>
+        <SlideShow isPaused={isMobileScrolling} />
 
         {/* Welcome hero */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -44,7 +70,7 @@ export default function Home() {
                 <p className="text-green-600 text-md font-bold">Tout pour réussir, au même endroit !</p>
 
                 <div className="mt-4 flex items-center justify-center md:justify-start gap-3">
-                  <button onClick={() => { const el = document.getElementById('categories'); if(el) el.scrollIntoView({ behavior: 'smooth' }); }} className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full font-semibold shadow-lg transform hover:-translate-y-0.5 transition">Voir les catégories</button>
+                  <button onClick={() => { const el = document.getElementById('categories'); if(el) { const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); el.scrollIntoView({ behavior: isMobile ? 'auto' : 'smooth' }); } }} className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full font-semibold shadow-lg transform hover:-translate-y-0.5 transition">Voir les catégories</button>
                   <a href="/contact" className="px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-800 hover:bg-gray-50">Contactez-nous</a>
                 </div>
               </div>
@@ -83,7 +109,7 @@ export default function Home() {
         </div>
 
         <div className="group">
-          <ProductSlider products={featuredProducts} />
+          <ProductSlider products={featuredProducts} isPaused={isMobileScrolling} />
         </div>
         <ContactPremium/>
       </section>
