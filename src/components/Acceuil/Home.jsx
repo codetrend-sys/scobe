@@ -64,7 +64,7 @@ export default function Home() {
                   <div className="flex items-center text-sm text-gray-500 gap-1"><Sparkles className="w-4 h-4" />Bienvenue</div>
                 </div>
 
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900">Bienvenue Chez <span className="text-blue-600">LIBRAIRIE TANGER SCOBE</span></h1>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900">Bienvenue Chez <span className="text-blue-600">LIBRAIRIE SCOBE TANGER</span></h1>
                 <p className="mt-2 text-gray-600 max-w-2xl mx-auto md:mx-0">Trouvez vos fournitures scolaires et articles de bureau au meilleur prix, pour tous les niveaux.
                   Qualité, choix et disponibilité immédiate <br/>  <br/></p>
                 <p className="text-green-600 text-md font-bold">Tout pour réussir, au même endroit !</p>
