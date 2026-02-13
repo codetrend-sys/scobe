@@ -175,7 +175,7 @@ export default function Checkout() {
   }
 
   const sendToWhatsApp = (order) => {
-  const phoneNumber = "212693393610"; //
+  const phoneNumber = "212661655137"; //
 
   const itemsText = order.items
     .map(
