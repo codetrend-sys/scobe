@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, HashRouter, Routes, Route, Navigate } from "react-router-dom";  // you can switch to HashRouter below if your host doesn't support client-side routing
+
 import { Header } from './components/layouts/header'
 import { Footer } from './components/layouts/footer';
 import Home from './components/Acceuil/Home.jsx';
@@ -34,6 +35,9 @@ import { CatalogProvider } from './context/CatalogContext.jsx';
 
 // import boutiqueData from './components/data/data.js';
 function App() {
+  // change Router to HashRouter if necessary (e.g. when you can't configure
+  // server-side rewrites). HashRouter uses the hash portion of the URL so the
+  // server always sees the same path and never returns a 404.
   return (
     <Router>
       <AlertProvider>
