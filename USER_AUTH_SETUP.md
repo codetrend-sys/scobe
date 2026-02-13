@@ -216,6 +216,7 @@ export function ProductCard({ product }) {
 - product_name: TEXT
 - product_price: DECIMAL
 - product_image_url: TEXT
+- product_barcode: TEXT    # nouveau champ pour code-barres
 - category: TEXT
 - rating: DECIMAL
 - created_at: TIMESTAMP

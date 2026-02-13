@@ -71,6 +71,7 @@ export default function Checkout() {
     shipping: { fullname, address, city, phone },
     items: cartItems.map(i => ({
       name: i.product.name,
+      barcode: i.product.barcode || '',
       price: i.product.price,
       quantity: i.quantity,
     })),
@@ -84,7 +85,7 @@ export default function Checkout() {
   const itemsText = order.items
     .map(
       item =>
-        `• ${item.name} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
+        `• ${item.name}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
     )
     .join('\n');
 
@@ -174,12 +175,12 @@ export default function Checkout() {
   }
 
   const sendToWhatsApp = (order) => {
-  const phoneNumber = "212661655137"; //
+  const phoneNumber = "212693393610"; //
 
   const itemsText = order.items
     .map(
       (item) =>
-        `• ${item.name} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
+        `• ${item.name}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
     )
     .join('%0A');
 

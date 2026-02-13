@@ -67,6 +67,7 @@ export function CatalogProvider({ children }) {
                 products: (productsData || []).map((p) => ({
                   id: p.id,
                   name: p.name,
+                  barcode: p.barcode || '',
                   price: parseFloat(p.price),
                   rating: parseFloat(p.rating),
                   imageUrl: p.image_url,
@@ -218,6 +219,7 @@ export function CatalogProvider({ children }) {
         .insert({
           subcategory_id: subId,
           name: product.name,
+          barcode: product.barcode || null,
           price: product.price || 0,
           rating: product.rating || 0,
           image_url: product.imageUrl || null,
@@ -249,6 +251,7 @@ export function CatalogProvider({ children }) {
         .from('products')
         .update({
           name: partial.name,
+          barcode: partial.barcode || null,
           price: partial.price || 0,
           rating: partial.rating || 0,
           image_url: partial.imageUrl || null,

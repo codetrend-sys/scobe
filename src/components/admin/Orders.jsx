@@ -301,7 +301,7 @@ export default function Orders() {
                       <ul className="list-disc pl-5 space-y-1">
                         {o.items.map((it, i) => (
                           <li key={i} className="text-gray-700">
-                            {it.name} <span className="font-semibold">x{it.quantity}</span> — <span className="font-bold">{(it.price * it.quantity).toFixed(2)} DH</span>
+                            {it.name}{it.barcode ? ` (code-barres: ${it.barcode})` : ''} <span className="font-semibold">x{it.quantity}</span> — <span className="font-bold">{(it.price * it.quantity).toFixed(2)} DH</span>
                           </li>
                         ))}
                       </ul>

@@ -128,6 +128,10 @@ export default function AdminDashboard() {
     }
 
     if (activeTab === 'products') {
+      if (!formData.barcode?.trim()) {
+        showError('barcode', 'Le code-barres est requis');
+        isValid = false;
+      }
       if (!formData.price || formData.price <= 0) {
         showError('price', 'Le prix doit être supérieur à 0');
         isValid = false;
@@ -360,6 +364,7 @@ export default function AdminDashboard() {
     }
     setFormData({
       name: '',
+      barcode: '',
       price: '',
       rating: 0,
       imageUrl: '',
@@ -386,6 +391,7 @@ export default function AdminDashboard() {
       if (isEditing) {
         await updateProduct(selectedCategory.id, selectedSub.id, formData.id, {
           name: formData.name.trim(),
+          barcode: formData.barcode?.trim() || null,
           price: parseFloat(formData.price) || 0,
           rating: parseFloat(formData.rating) || 0,
           imageUrl: formData.imageUrl || '',
@@ -396,6 +402,7 @@ export default function AdminDashboard() {
       } else {
         await addProduct(selectedCategory.id, selectedSub.id, {
           name: formData.name.trim(),
+          barcode: formData.barcode?.trim() || null,
           price: parseFloat(formData.price) || 0,
           rating: parseFloat(formData.rating) || 0,
           imageUrl: formData.imageUrl || '',
@@ -700,6 +707,24 @@ export default function AdminDashboard() {
                   {/* Prix et Note (Produits) */}
                   {activeTab === 'products' && (
                     <>
+                      {/* Code-barres */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Code-barres <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.barcode || ''}
+                          onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                          placeholder="Ex : 1234567890123"
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            formErrors.barcode ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                        />
+                        {formErrors.barcode && (
+                          <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.barcode}</p>
+                        )}
+                      </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -1107,6 +1132,25 @@ export default function AdminDashboard() {
                             />
                             {formErrors.name && (
                               <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
+                            )}
+                          </div>
+
+                          {/* Code-barres */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Code-barres <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.barcode || ''}
+                              onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                              placeholder="Ex : 1234567890123"
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                formErrors.barcode ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                            {formErrors.barcode && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.barcode}</p>
                             )}
                           </div>
 

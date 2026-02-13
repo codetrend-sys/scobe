@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS products (
   id BIGSERIAL PRIMARY KEY,
   subcategory_id BIGINT NOT NULL REFERENCES subcategories(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
+  barcode TEXT UNIQUE,
   price DECIMAL(10, 2) NOT NULL DEFAULT 0,
   rating DECIMAL(3, 1) NOT NULL DEFAULT 0,
   image_url TEXT,
