@@ -10,7 +10,8 @@ export function SearchBar({ mobile = false, onSearch } ) {
     const q = term.trim();
     if (!q) return;
     navigate(`/search?q=${encodeURIComponent(q)}`);
-    setTerm('');
+    // keep the value in the input so the user can refine or see what was searched
+    // setTerm('');
     if (typeof onSearch === 'function') onSearch();
   }
 

@@ -72,6 +72,7 @@ export default function Checkout() {
     items: cartItems.map(i => ({
       name: i.product.name,
       barcode: i.product.barcode || '',
+      reference: i.product.reference || '',
       price: i.product.price,
       quantity: i.quantity,
     })),
@@ -79,13 +80,11 @@ export default function Checkout() {
     createdAt: new Date().toISOString(),
   };
 
-  
-
   // 📝 Texte lisible pour l’email
   const itemsText = order.items
     .map(
       item =>
-        `• ${item.name}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
+        `• ${item.name}${item.reference ? ` (réf : ${item.reference})` : ''}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
     )
     .join('\n');
 
@@ -118,7 +117,7 @@ export default function Checkout() {
               order_id: order.id,
               user_id: currentUser ? currentUser.id : null,
               shipping: order.shipping,
-              items: order.items,
+              items: order.items,    // includes reference field now
               total: order.total,
               status: 'pending',
               created_at: order.createdAt,
@@ -180,7 +179,7 @@ export default function Checkout() {
   const itemsText = order.items
     .map(
       (item) =>
-        `• ${item.name}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
+        `• ${item.name}${item.reference ? ` (réf : ${item.reference})` : ''}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
     )
     .join('%0A');
 

@@ -132,6 +132,11 @@ export default function AdminDashboard() {
         showError('barcode', 'Le code-barres est requis');
         isValid = false;
       }
+      // reference is optional but limit length
+      if (formData.reference && formData.reference.length > 100) {
+        showError('reference', 'La référence ne doit pas dépasser 100 caractères');
+        isValid = false;
+      }
       if (!formData.price || formData.price <= 0) {
         showError('price', 'Le prix doit être supérieur à 0');
         isValid = false;
@@ -392,6 +397,7 @@ export default function AdminDashboard() {
         await updateProduct(selectedCategory.id, selectedSub.id, formData.id, {
           name: formData.name.trim(),
           barcode: formData.barcode?.trim() || null,
+          reference: formData.reference?.trim() || null,
           price: parseFloat(formData.price) || 0,
           rating: parseFloat(formData.rating) || 0,
           imageUrl: formData.imageUrl || '',
@@ -403,6 +409,7 @@ export default function AdminDashboard() {
         await addProduct(selectedCategory.id, selectedSub.id, {
           name: formData.name.trim(),
           barcode: formData.barcode?.trim() || null,
+          reference: formData.reference?.trim() || null,
           price: parseFloat(formData.price) || 0,
           rating: parseFloat(formData.rating) || 0,
           imageUrl: formData.imageUrl || '',
@@ -725,6 +732,26 @@ export default function AdminDashboard() {
                           <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.barcode}</p>
                         )}
                       </div>
+
+                      {/* Référence produit */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Référence
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.reference || ''}
+                          onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
+                          placeholder="Ex : NAVIGATOR-A3"
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            formErrors.reference ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                        />
+                        {formErrors.reference && (
+                          <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.reference}</p>
+                        )}
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -1154,6 +1181,25 @@ export default function AdminDashboard() {
                             )}
                           </div>
 
+                          {/* Référence */}
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Référence
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.reference || ''}
+                              onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
+                              placeholder="Ex : NAVIGATOR-A3"
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                                formErrors.reference ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                            {formErrors.reference && (
+                              <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.reference}</p>
+                            )}
+                          </div>
+
                           {/* Prix et Note */}
                           <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -1271,6 +1317,9 @@ export default function AdminDashboard() {
                           <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
                           {product.featured && <span className="text-lg">📌</span>}
                         </div>
+                        {product.reference && (
+                          <p className="text-xs text-gray-500">Réf: {product.reference}</p>
+                        )}
                         <p className="text-sm text-gray-600 mt-1">
                           💰 {product.price} DH • ⭐ {product.rating || 0}/5
                         </p>

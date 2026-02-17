@@ -22,7 +22,9 @@ export default function SearchResults() {
 
   const matches = q ? allProducts.filter(p => {
     const name = (p.name || '').toLowerCase();
-    return name === q || name.startsWith(q);
+    const ref = (p.reference || '').toLowerCase();
+    // match if query appears anywhere in the product name or exactly equals reference
+    return name.includes(q) || (ref && ref === q);
   }) : [];
 
   return (

@@ -68,6 +68,7 @@ export function CatalogProvider({ children }) {
                   id: p.id,
                   name: p.name,
                   barcode: p.barcode || '',
+                  reference: p.reference || '',
                   price: parseFloat(p.price),
                   rating: parseFloat(p.rating),
                   imageUrl: p.image_url,
@@ -220,6 +221,7 @@ export function CatalogProvider({ children }) {
           subcategory_id: subId,
           name: product.name,
           barcode: product.barcode || null,
+          reference: product.reference || null,
           price: product.price || 0,
           rating: product.rating || 0,
           image_url: product.imageUrl || null,
@@ -252,6 +254,7 @@ export function CatalogProvider({ children }) {
         .update({
           name: partial.name,
           barcode: partial.barcode || null,
+          reference: partial.reference || null,
           price: partial.price || 0,
           rating: partial.rating || 0,
           image_url: partial.imageUrl || null,
