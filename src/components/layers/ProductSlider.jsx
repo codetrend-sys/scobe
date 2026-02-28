@@ -111,7 +111,7 @@ export function ProductSlider({ products, isPaused: externalIsPaused }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [itemsPerView, setItemsPerView] = useState(3);
+  const [itemsPerView, setItemsPerView] = useState(4);
   const sliderRef = useRef(null);
 
   // Respecter la pause externe (scroll mobile)
@@ -127,11 +127,11 @@ export function ProductSlider({ products, isPaused: externalIsPaused }) {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setItemsPerView(1); // Mobile
+        setItemsPerView(1.5); // Mobile
       } else if (window.innerWidth < 1024) {
-        setItemsPerView(2); // Tablet
+        setItemsPerView(3); // Tablet
       } else {
-        setItemsPerView(3); // Desktop
+        setItemsPerView(4); // Desktop
       }
     };
 
@@ -184,9 +184,8 @@ export function ProductSlider({ products, isPaused: externalIsPaused }) {
               key={product.id}
               className="flex-shrink-0 relative"
               style={{
-                width: `calc(${100 / itemsPerView}% - ${
-                  ((itemsPerView - 1) * 24) / itemsPerView
-                }px)`,
+                width: `calc(${100 / itemsPerView}% - ${((itemsPerView - 1) * 24) / itemsPerView
+                  }px)`,
               }}
             >
               {/* Composant produit */}
@@ -194,8 +193,8 @@ export function ProductSlider({ products, isPaused: externalIsPaused }) {
 
               {/* Icône favoris (original) */}
               <button
-                onClick={async (e) => { 
-                  e.stopPropagation(); 
+                onClick={async (e) => {
+                  e.stopPropagation();
                   const res = await toggleFavorite(product);
                   if (!res?.ok) {
                     setShowPopup(true);
@@ -205,9 +204,8 @@ export function ProductSlider({ products, isPaused: externalIsPaused }) {
               >
                 <Heart
                   fill={isFavorite(product.id) ? 'currentColor' : 'none'}
-                  className={`w-8 h-6 transition-transform duration-300 ${
-                    isFavorite(product.id) ? 'text-red-500 scale-125' : 'text-gray-800'
-                  }`}
+                  className={`w-8 h-6 transition-transform duration-300 ${isFavorite(product.id) ? 'text-red-500 scale-125' : 'text-gray-800'
+                    }`}
                 />
               </button>
               {showPopup && typeof document !== 'undefined' && createPortal(
@@ -260,11 +258,10 @@ export function ProductSlider({ products, isPaused: externalIsPaused }) {
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex
+                className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
                     ? "bg-blue-600 w-8"
                     : "bg-blue-200 hover:bg-green-500 w-2"
-                }`}
+                  }`}
               />
             ))}
           </div>

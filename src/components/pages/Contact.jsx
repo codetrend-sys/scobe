@@ -17,58 +17,71 @@ export default function ContactPremium() {
   };
 
   const handleSubmit = async e => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!form.name || !form.email || !form.subject || !form.message) {
-    setStatus('Veuillez remplir tous les champs.');
-    return;
-  }
-
-  setLoading(true);
-  setStatus('');
-
-  // Formsubmit attend du form-urlencoded (pas du JSON)
-  const formData = new URLSearchParams();
-  formData.append('name', form.name);
-  formData.append('email', form.email);
-  formData.append('subject', form.subject);
-  formData.append('message', form.message);
-
-  // Options Formsubmit
-  formData.append('_subject', `Nouveau message : ${form.subject}`);
-  formData.append('_template', 'table'); // email plus lisible
-  formData.append('_captcha', 'false'); // optionnel
-
-  try {
-    const res = await fetch(
-      'https://formsubmit.co/scobelibrairietanger@gmail.com',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
-        },
-        body: formData.toString(),
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error('Erreur Formsubmit');
+    if (!form.name || !form.email || !form.subject || !form.message) {
+      setStatus('Veuillez remplir tous les champs.');
+      return;
     }
 
-    setStatus('success');
-    setForm({ name: '', email: '', subject: '', message: '' });
-  } catch (err) {
-    console.error(err);
-    setStatus('error');
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    setStatus('');
+
+    // Formsubmit attend du form-urlencoded (pas du JSON)
+    const formData = new URLSearchParams();
+    formData.append('name', form.name);
+    formData.append('email', form.email);
+    formData.append('subject', form.subject);
+    formData.append('message', form.message);
+
+    // Options Formsubmit
+    formData.append('_subject', `Nouveau message : ${form.subject}`);
+    formData.append('_template', 'table'); // email plus lisible
+    formData.append('_captcha', 'false'); // optionnel
+
+    try {
+      const res = await fetch(
+        'https://formsubmit.co/scobelibrairietanger@gmail.com',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: formData.toString(),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error('Erreur Formsubmit');
+      }
+
+      setStatus('success');
+      setForm({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      setStatus('error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4 py-12">
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden">
+    <section className="w-full flex flex-col items-center justify-center bg-transparent py-12">
+      <div className="text-center mb-12 space-y-4">
+        <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
+          <Mail className="w-4 h-4" />
+          Contactez-nous
+        </div>
+        <h2 className="text-4xl lg:text-5xl font-bold text-gray-900">
+          Une Question ?
+        </h2>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Notre équipe est à votre disposition pour répondre à toutes vos interrogations et vous accompagner dans vos choix.
+        </p>
+      </div>
+
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden border border-gray-100">
 
         {/* LEFT INFO */}
         <div className="p-12 bg-gradient-to-br from-blue-600 to-green-600 text-white flex flex-col justify-center space-y-6">
@@ -169,11 +182,10 @@ export default function ContactPremium() {
 
           <button
             disabled={loading}
-            className={`w-full py-3 rounded-xl font-semibold text-white ${
-              loading
+            className={`w-full py-3 rounded-xl font-semibold text-white ${loading
                 ? 'bg-blue-400'
                 : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+              }`}
           >
             {loading ? 'Envoi en cours…' : 'Envoyer le message'}
           </button>

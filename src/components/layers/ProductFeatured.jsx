@@ -25,6 +25,7 @@ export default function ProductFeatured({ product }) {
             rating: parseFloat(p.rating || 0),
             imageUrl: p.image_url,
             featured: p.featured,
+            isInStock: p.is_in_stock !== false,
             description: p.description || '',
           }));
           setFeatured(products);
@@ -46,6 +47,13 @@ export default function ProductFeatured({ product }) {
             alt={product.name}
             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
           />
+          {product.isInStock === false && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <span className="bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg transform -rotate-12 border-2 border-white">
+                RUPTURE DE STOCK
+              </span>
+            </div>
+          )}
 
           {/* Badge */}
           {product.featured && (
@@ -60,22 +68,24 @@ export default function ProductFeatured({ product }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Add to cart */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(product, 1);
-            }}
-            className="absolute bottom-1 left-1/2 -translate-x-1/2 translate-y-full group-hover:translate-y-[-40%]  
-            px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all duration-300 shadow-xl bg-white text-gray-900 hover:bg-blue-600 hover:text-white"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            Ajouter au panier
-          </button>
+          {product.isInStock !== false && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product, 1);
+              }}
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 translate-y-full group-hover:translate-y-[-40%]  
+              px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all duration-300 shadow-xl bg-white text-gray-900 hover:bg-blue-600 hover:text-white"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Ajouter au panier
+            </button>
+          )}
         </div>
 
         {/* Infos */}
-        <div className="p-6">
-          <h3 className="text-lg font-bold text-gray-800 mt-2 mb-1 group-hover:text-blue-500 transition-colors duration-200">
+        <div className="p-4">
+          <h3 className="text-base font-bold text-gray-800 mt-1 mb-1 group-hover:text-blue-500 transition-colors duration-200">
             {product.name}
           </h3>
 
@@ -86,7 +96,7 @@ export default function ProductFeatured({ product }) {
           )}
 
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-gray-800">
+            <span className="text-xl font-bold text-gray-800">
               {product.price.toFixed(2)} DH
             </span>
           </div>
@@ -97,7 +107,7 @@ export default function ProductFeatured({ product }) {
 
   // Sinon, on rend la liste des produits en vedette
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
       {featured.map((p) => (
         <div key={p.id} className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
           <div className="relative overflow-hidden aspect-square">
@@ -105,10 +115,10 @@ export default function ProductFeatured({ product }) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             {/* Favorite handled by parent slider or product list; no duplicate heart here */}
           </div>
-          <div className="p-6">
-            <h3 className="text-lg font-bold text-gray-800 mt-2 mb-1 group-hover:text-blue-500 transition-colors duration-200">{p.name}</h3>
+          <div className="p-4">
+            <h3 className="text-base font-bold text-gray-800 mt-1 mb-1 group-hover:text-blue-500 transition-colors duration-200">{p.name}</h3>
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-gray-800">{p.price.toFixed(2)} €</span>
+              <span className="text-xl font-bold text-gray-800">{p.price.toFixed(2)} €</span>
             </div>
           </div>
         </div>

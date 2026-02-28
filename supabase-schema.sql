@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS products (
   rating DECIMAL(3, 1) NOT NULL DEFAULT 0,
   image_url TEXT,
   featured BOOLEAN NOT NULL DEFAULT false,
+  is_in_stock BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );

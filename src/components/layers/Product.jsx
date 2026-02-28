@@ -1,6 +1,6 @@
 import { X, Star, ShoppingCart, Truck, ShieldCheck, ChevronUp, Type } from 'lucide-react';
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useRef} from "react";
 import { useCatalog } from '../../context/CatalogContext.jsx';
 import ProductDetail from "./ProductDetails";
 import { useCart } from '../../context/CartContext';
@@ -24,11 +24,12 @@ export default function Product(props) {
   const [sortAlpha, setSortAlpha] = useState(false);
   const [sortPrice, setSortPrice] = useState(null); // null, 'asc', 'desc'
 
+  const sectionRef = useRef(null);
+
   useEffect(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }, [currentPage]);
 
   const itemsPerPage = 10;
@@ -58,7 +59,7 @@ export default function Product(props) {
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentProducts = sortedProducts.slice(indexOfFirst, indexOfLast);
-  
+
 
   const goToPrevious = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
   const goToNext = () => { if (currentPage < totalPages) setCurrentPage(currentPage + 1); };
@@ -90,7 +91,7 @@ export default function Product(props) {
 
   return (
     <>
-      <section className="max-w-7xl mx-auto px-4 py-20">
+      <section ref={sectionRef} className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Tous nos Produits
@@ -107,11 +108,10 @@ export default function Product(props) {
             {/* Tri Alphabétique */}
             <button
               onClick={handleAlphaSort}
-              className={`flex items-center gap-2 px-3 py-1 rounded-lg transition font-medium ${
-                sortAlpha
-                  ? 'bg-green-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 px-3 py-1 rounded-lg transition font-medium ${sortAlpha
+                ? 'bg-green-600 text-white shadow-lg'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
+                }`}
             >
               <Type className="w-4 h-4" />
               Alphabetique
@@ -120,24 +120,22 @@ export default function Product(props) {
             {/* Tri Prix */}
             <button
               onClick={handlePriceSort}
-              className={`flex items-center gap-2 px-3 py-1 rounded-lg transition font-medium ${
-                sortPrice
-                  ? 'bg-green-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 px-3 py-1 rounded-lg transition font-medium ${sortPrice
+                ? 'bg-green-600 text-white shadow-lg'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                }`}
             >
               Prix
               <ChevronUp
-                className={`w-4 h-4 transition-transform duration-300 ${
-                  sortPrice === 'asc' ? 'rotate-0' : sortPrice === 'desc' ? 'rotate-180' : 'opacity-0'
-                }`}
+                className={`w-4 h-4 transition-transform duration-300 ${sortPrice === 'asc' ? 'rotate-0' : sortPrice === 'desc' ? 'rotate-180' : 'opacity-0'
+                  }`}
               />
             </button>
           </div>
         </div>
 
         {/* Grille des produits */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
           {currentProducts.map(product => (
             <div
               key={product.id}
@@ -145,47 +143,52 @@ export default function Product(props) {
               className="cursor-pointer transform transition hover:border-green-700 border border-transparent rounded-xl"
             >
               <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl relative">
-                <div className="aspect-square overflow-hidden">
+                <div className="aspect-square overflow-hidden relative">
                   <img
                     src={product.imageUrl}
                     alt={product.name}
                     className="w-full h-full object-cover hover:scale-110 transition duration-500"
                   />
+                  {product.isInStock === false && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg transform -rotate-12 border-2 border-white">
+                        RUPTURE
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Icône favoris (composant partagé) */}
                 <div className="absolute top-3 right-3">
                   <FavoriteButton product={product} />
                 </div>
-
-                <div className="p-4">
+                <div className="p-3">
                   <span className="text-xs font-semibold text-orange-500 uppercase">
                     {product.category}
                   </span>
 
-                  <h3 className="font-bold mt-1 mb-2">{product.name}</h3>
+                  <h3 className="font-bold mt-0.5 mb-1 text-sm line-clamp-1">{product.name}</h3>
 
                   <div className="flex items-center space-x-2">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`h-5 w-5 ${
-                            i < Math.floor(product.rating)
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
-                          }`}
+                          className={`h-5 w-5 ${i < Math.floor(product.rating)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
+                            }`}
                         />
                       ))}
                     </div>
                     <span className="text-gray-600">{product.rating} (avis)</span>
                   </div>
 
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-xl font-bold">{product.price.toFixed(2)} DH</span>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-lg font-bold">{product.price.toFixed(2)} DH</span>
                     <button
                       onClick={(e) => { e.stopPropagation(); setSelectedProduct(product); setIsOpen(true); }}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-green-600"
+                      className="bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs hover:bg-green-600"
                     >
                       Voir
                     </button>
@@ -210,11 +213,10 @@ export default function Product(props) {
             <button
               key={page}
               onClick={() => goToPage(page)}
-              className={`px-3 py-1 rounded ${
-                page === currentPage
-                  ? 'bg-blue-500 text-white font-semibold'
-                  : 'bg-blue-200 text-gray-700 hover:bg-green-600'
-              }`}
+              className={`px-3 py-1 rounded ${page === currentPage
+                ? 'bg-blue-500 text-white font-semibold'
+                : 'bg-blue-200 text-gray-700 hover:bg-green-600'
+                }`}
             >
               {page}
             </button>
@@ -228,7 +230,7 @@ export default function Product(props) {
             Suivant
           </button>
         </div>
-      </section>
+      </section >
 
       <ProductDetail
         product={selectedProduct}

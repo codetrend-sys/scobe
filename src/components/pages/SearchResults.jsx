@@ -38,18 +38,25 @@ export default function SearchResults() {
         <div className="text-center text-gray-600">Aucun produit trouvé pour ce terme.</div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 mt-6">
         {matches.map(product => (
           <div key={product.id} className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl cursor-pointer relative" onClick={() => { setSelectedProduct(product); setIsOpen(true); }}>
-            <div className="aspect-square overflow-hidden">
-              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover"/>
+            <div className="aspect-square overflow-hidden relative">
+              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+              {product.isInStock === false && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg transform -rotate-12 border-2 border-white">
+                    RUPTURE
+                  </span>
+                </div>
+              )}
             </div>
             <div className="absolute top-3 right-3">
               <FavoriteButton product={product} />
             </div>
-            <div className="p-4">
+            <div className="p-3">
               <span className="text-xs font-semibold text-orange-500 uppercase">{product.category}</span>
-              <h3 className="font-bold mt-1 mb-2">{product.name}</h3>
+              <h3 className="font-bold mt-0.5 mb-1 text-sm line-clamp-1">{product.name}</h3>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
@@ -59,16 +66,20 @@ export default function SearchResults() {
                 <span className="text-gray-600">{product.rating} (avis)</span>
               </div>
 
-              <div className="flex items-center justify-between mt-3">
-                <span className="text-xl font-bold">{product.price.toFixed(2)} DH</span>
-                <button onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }} className=" bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-green-600">Ajouter au panier</button>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-lg font-bold">{product.price.toFixed(2)} DH</span>
+                {product.isInStock !== false ? (
+                  <button onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }} className=" bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs hover:bg-green-600">Ajouter au panier</button>
+                ) : (
+                  <span className="text-red-600 font-bold text-sm">Rupture</span>
+                )}
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <ProductDetail product={selectedProduct} isOpen={isOpen} onClose={() => setIsOpen(false)} onAddToCart={(p) => addToCart(p,1)} />
+      <ProductDetail product={selectedProduct} isOpen={isOpen} onClose={() => setIsOpen(false)} onAddToCart={(p) => addToCart(p, 1)} />
       <ScrollToTopButton minScroll={100} />
     </section>
   );

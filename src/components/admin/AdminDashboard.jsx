@@ -374,6 +374,7 @@ export default function AdminDashboard() {
       rating: 0,
       imageUrl: '',
       featured: false,
+      isInStock: true,
     });
     setImagePreview('');
     setIsEditing(false);
@@ -402,6 +403,7 @@ export default function AdminDashboard() {
           rating: parseFloat(formData.rating) || 0,
           imageUrl: formData.imageUrl || '',
           featured: formData.featured || false,
+          isInStock: formData.isInStock !== false,
         });
         showSuccess('✅ Produit modifié');
         await verifyChangeInSupabase('product', formData.id);
@@ -414,6 +416,7 @@ export default function AdminDashboard() {
           rating: parseFloat(formData.rating) || 0,
           imageUrl: formData.imageUrl || '',
           featured: formData.featured || false,
+          isInStock: formData.isInStock !== false,
         });
         showSuccess('✅ Produit ajouté');
       }
@@ -476,7 +479,7 @@ export default function AdminDashboard() {
             </div>
             <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex gap-3 justify-end">
               <button onClick={closeConfirmDialog} className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg transition font-semibold">Annuler</button>
-              <button onClick={handleConfirmAction} className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-semibold flex items-center gap-2"> 
+              <button onClick={handleConfirmAction} className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-semibold flex items-center gap-2">
                 <Trash2 size={18} /> Supprimer
               </button>
             </div>
@@ -491,7 +494,7 @@ export default function AdminDashboard() {
             <p className="text-gray-600 mt-1">Gérez vos catégories, sous-catégories et produits</p>
           </div>
           <button
-              onClick={() => { logout(); navigate('/'); }}
+            onClick={() => { logout(); navigate('/'); }}
             className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium"
           >
             <LogOut size={18} />
@@ -510,11 +513,10 @@ export default function AdminDashboard() {
         )}
 
         {verificationStatus && (
-          <div className={`mb-6 rounded-lg p-4 flex items-center gap-3 ${
-            verificationStatus.includes('✅')
-              ? 'bg-green-50 border border-green-200'
-              : 'bg-blue-50 border border-blue-200'
-          }`}>
+          <div className={`mb-6 rounded-lg p-4 flex items-center gap-3 ${verificationStatus.includes('✅')
+            ? 'bg-green-50 border border-green-200'
+            : 'bg-blue-50 border border-blue-200'
+            }`}>
             <span className={verificationStatus.includes('✅') ? 'text-green-800' : 'text-blue-800'}>
               {verificationStatus}
             </span>
@@ -532,51 +534,46 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-lg shadow-sm mb-6 p-1 flex flex-wrap gap-1">
           <button
             onClick={() => { setActiveTab('categories'); resetForm(); setSelectedCategoryId(null); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-1 ${
-              activeTab === 'categories'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-1 ${activeTab === 'categories'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
           >
             📁 Catégories
           </button>
           <button
             onClick={() => { setActiveTab('users'); resetForm(); }}
-            className={`w-full sm:flex-1 py-3 px-4 rounded-lg font-medium transition order-6 sm:order-5 ${
-              activeTab === 'users'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`w-full sm:flex-1 py-3 px-4 rounded-lg font-medium transition order-6 sm:order-5 ${activeTab === 'users'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
           >
             👥 Utilisateurs
           </button>
           <button
             onClick={() => { setActiveTab('subcategories'); resetForm(); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-3 sm:order-2 ${
-              activeTab === 'subcategories'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-3 sm:order-2 ${activeTab === 'subcategories'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
           >
             📂 Sous-catégories
           </button>
           <button
             onClick={() => { setActiveTab('products'); resetForm(); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-4 sm:order-3 ${
-              activeTab === 'products'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-4 sm:order-3 ${activeTab === 'products'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
           >
             📦 Produits
           </button>
           <button
             onClick={() => { setActiveTab('orders'); resetForm(); }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-5 sm:order-4 ${
-              activeTab === 'orders'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition order-5 sm:order-4 ${activeTab === 'orders'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+              }`}
           >
             🧾 Commandes
           </button>
@@ -592,7 +589,7 @@ export default function AdminDashboard() {
                   <h2 className="text-2xl font-bold text-gray-900">
                     {isEditing ? '✏️ Modifier' : '➕ Ajouter'} {
                       activeTab === 'categories' ? 'Catégorie' :
-                      activeTab === 'subcategories' ? 'Sous-catégorie' : 'Produit'
+                        activeTab === 'subcategories' ? 'Sous-catégorie' : 'Produit'
                     }
                   </h2>
                   <button
@@ -615,11 +612,10 @@ export default function AdminDashboard() {
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder={
                         activeTab === 'categories' ? 'Ex: Papeterie' :
-                        activeTab === 'subcategories' ? 'Ex: Cahiers' : 'Ex: Cahier A4 100 feuilles'
+                          activeTab === 'subcategories' ? 'Ex: Cahiers' : 'Ex: Cahier A4 100 feuilles'
                       }
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                        formErrors.name ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${formErrors.name ? 'border-red-500' : 'border-gray-300'
+                        }`}
                     />
                     {formErrors.name && (
                       <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
@@ -647,13 +643,13 @@ export default function AdminDashboard() {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Image {activeTab === 'categories' ? '' : '*'}
                     </label>
-                    
+
                     {/* Aperçu Image */}
                     {imagePreview && (
                       <div className="mb-4 relative">
-                        <img 
-                          src={imagePreview} 
-                          alt="Aperçu" 
+                        <img
+                          src={imagePreview}
+                          alt="Aperçu"
                           className="w-full h-40 object-cover rounded-lg border border-gray-300"
                         />
                         <button
@@ -681,11 +677,10 @@ export default function AdminDashboard() {
                       />
                       <label
                         htmlFor={`image-upload-${activeTab}`}
-                        className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition ${
-                          isUploading
-                            ? 'border-gray-300 bg-gray-100'
-                            : 'border-blue-300 hover:border-blue-500 hover:bg-blue-50'
-                        } ${formErrors.image ? 'border-red-500 bg-red-50' : ''}`}
+                        className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition ${isUploading
+                          ? 'border-gray-300 bg-gray-100'
+                          : 'border-blue-300 hover:border-blue-500 hover:bg-blue-50'
+                          } ${formErrors.image ? 'border-red-500 bg-red-50' : ''}`}
                       >
                         {isUploading ? (
                           <>
@@ -724,9 +719,8 @@ export default function AdminDashboard() {
                           value={formData.barcode || ''}
                           onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                           placeholder="Ex : 1234567890123"
-                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                            formErrors.barcode ? 'border-red-500' : 'border-gray-300'
-                          }`}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.barcode ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
                         {formErrors.barcode && (
                           <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.barcode}</p>
@@ -743,9 +737,8 @@ export default function AdminDashboard() {
                           value={formData.reference || ''}
                           onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
                           placeholder="Ex : NAVIGATOR-A3"
-                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                            formErrors.reference ? 'border-red-500' : 'border-gray-300'
-                          }`}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.reference ? 'border-red-500' : 'border-gray-300'
+                            }`}
                         />
                         {formErrors.reference && (
                           <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.reference}</p>
@@ -763,9 +756,8 @@ export default function AdminDashboard() {
                             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                             placeholder="0.00"
                             step="0.01"
-                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                              formErrors.price ? 'border-red-500' : 'border-gray-300'
-                            }`}
+                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.price ? 'border-red-500' : 'border-gray-300'
+                              }`}
                           />
                           {formErrors.price && (
                             <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.price}</p>
@@ -783,9 +775,8 @@ export default function AdminDashboard() {
                             min="0"
                             max="5"
                             step="0.5"
-                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                              formErrors.rating ? 'border-red-500' : 'border-gray-300'
-                            }`}
+                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.rating ? 'border-red-500' : 'border-gray-300'
+                              }`}
                           />
                           {formErrors.rating && (
                             <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.rating}</p>
@@ -803,6 +794,17 @@ export default function AdminDashboard() {
                         />
                         <span className="text-gray-800 font-medium">📌 Produit en vedette</span>
                       </label>
+
+                      {/* Checkbox Stock */}
+                      <label className="flex items-center gap-3 p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition">
+                        <input
+                          type="checkbox"
+                          checked={formData.isInStock !== false}
+                          onChange={(e) => setFormData({ ...formData, isInStock: e.target.checked })}
+                          className="w-5 h-5 text-green-600 rounded"
+                        />
+                        <span className="text-gray-800 font-medium">📦 Produit en stock</span>
+                      </label>
                     </>
                   )}
 
@@ -811,8 +813,8 @@ export default function AdminDashboard() {
                     <button
                       onClick={
                         activeTab === 'categories' ? handleSaveCategory :
-                        activeTab === 'subcategories' ? handleSaveSubcategory :
-                        handleSaveProduct
+                          activeTab === 'subcategories' ? handleSaveSubcategory :
+                            handleSaveProduct
                       }
                       disabled={isUploading}
                       className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg transition font-semibold"
@@ -836,15 +838,15 @@ export default function AdminDashboard() {
               <button
                 onClick={
                   activeTab === 'categories' ? openAddCategoryForm :
-                  activeTab === 'subcategories' ? openAddSubcategoryForm :
-                  openAddProductForm
+                    activeTab === 'subcategories' ? openAddSubcategoryForm :
+                      openAddProductForm
                 }
                 className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg mb-6 transition font-semibold flex items-center justify-center gap-2"
               >
                 <Plus size={20} />
                 Ajouter {
                   activeTab === 'categories' ? 'une catégorie' :
-                  activeTab === 'subcategories' ? 'une sous-catégorie' : 'un produit'
+                    activeTab === 'subcategories' ? 'une sous-catégorie' : 'un produit'
                 }
               </button>
             )}
@@ -878,9 +880,8 @@ export default function AdminDashboard() {
                               value={formData.name || ''}
                               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                               placeholder="Nom de la catégorie"
-                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                                formErrors.name ? 'border-red-500' : 'border-gray-300'
-                              }`}
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.name ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             />
                             {formErrors.name && (
                               <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
@@ -918,8 +919,8 @@ export default function AdminDashboard() {
                                 {isUploading && <p className="text-blue-600 text-sm mt-2">📤 Upload en cours...</p>}
                               </div>
                               {imagePreview && (
-                                <img 
-                                  src={imagePreview} 
+                                <img
+                                  src={imagePreview}
                                   alt="Aperçu"
                                   className="w-24 h-24 object-cover rounded-lg border border-gray-300"
                                 />
@@ -954,8 +955,8 @@ export default function AdminDashboard() {
                     {/* Item */}
                     <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-blue-500 flex gap-4">
                       {cat.imageUrl && (
-                        <img 
-                          src={cat.imageUrl} 
+                        <img
+                          src={cat.imageUrl}
                           alt={cat.name}
                           className="w-16 h-16 object-cover rounded-lg"
                         />
@@ -1025,9 +1026,8 @@ export default function AdminDashboard() {
                               value={formData.name || ''}
                               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                               placeholder="Nom de la sous-catégorie"
-                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                                formErrors.name ? 'border-red-500' : 'border-gray-300'
-                              }`}
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${formErrors.name ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             />
                             {formErrors.name && (
                               <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
@@ -1051,8 +1051,8 @@ export default function AdminDashboard() {
                                 {isUploading && <p className="text-green-600 text-sm mt-2">📤 Upload en cours...</p>}
                               </div>
                               {imagePreview && (
-                                <img 
-                                  src={imagePreview} 
+                                <img
+                                  src={imagePreview}
                                   alt="Aperçu"
                                   className="w-24 h-24 object-cover rounded-lg border border-gray-300"
                                 />
@@ -1087,8 +1087,8 @@ export default function AdminDashboard() {
                     {/* Item */}
                     <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-green-500 flex gap-4">
                       {sub.imageUrl && (
-                        <img 
-                          src={sub.imageUrl} 
+                        <img
+                          src={sub.imageUrl}
                           alt={sub.name}
                           className="w-16 h-16 object-cover rounded-lg"
                         />
@@ -1153,9 +1153,8 @@ export default function AdminDashboard() {
                               value={formData.name || ''}
                               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                               placeholder="Nom du produit"
-                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                                formErrors.name ? 'border-red-500' : 'border-gray-300'
-                              }`}
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${formErrors.name ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             />
                             {formErrors.name && (
                               <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.name}</p>
@@ -1172,9 +1171,8 @@ export default function AdminDashboard() {
                               value={formData.barcode || ''}
                               onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                               placeholder="Ex : 1234567890123"
-                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                                formErrors.barcode ? 'border-red-500' : 'border-gray-300'
-                              }`}
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${formErrors.barcode ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             />
                             {formErrors.barcode && (
                               <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.barcode}</p>
@@ -1191,9 +1189,8 @@ export default function AdminDashboard() {
                               value={formData.reference || ''}
                               onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
                               placeholder="Ex : NAVIGATOR-A3"
-                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                                formErrors.reference ? 'border-red-500' : 'border-gray-300'
-                              }`}
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${formErrors.reference ? 'border-red-500' : 'border-gray-300'
+                                }`}
                             />
                             {formErrors.reference && (
                               <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.reference}</p>
@@ -1212,9 +1209,8 @@ export default function AdminDashboard() {
                                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                 placeholder="0.00"
                                 step="0.01"
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                                  formErrors.price ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${formErrors.price ? 'border-red-500' : 'border-gray-300'
+                                  }`}
                               />
                               {formErrors.price && (
                                 <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.price}</p>
@@ -1232,9 +1228,8 @@ export default function AdminDashboard() {
                                 min="0"
                                 max="5"
                                 step="0.5"
-                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                                  formErrors.rating ? 'border-red-500' : 'border-gray-300'
-                                }`}
+                                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${formErrors.rating ? 'border-red-500' : 'border-gray-300'
+                                  }`}
                               />
                               {formErrors.rating && (
                                 <p className="text-red-600 text-sm mt-1">⚠️ {formErrors.rating}</p>
@@ -1251,6 +1246,17 @@ export default function AdminDashboard() {
                               className="w-5 h-5 text-purple-600 rounded"
                             />
                             <span className="text-gray-800 font-medium">📌 Produit en vedette</span>
+                          </label>
+
+                          {/* Checkbox Stock */}
+                          <label className="flex items-center gap-3 p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition">
+                            <input
+                              type="checkbox"
+                              checked={formData.isInStock !== false}
+                              onChange={(e) => setFormData({ ...formData, isInStock: e.target.checked })}
+                              className="w-5 h-5 text-green-600 rounded"
+                            />
+                            <span className="text-gray-800 font-medium">📦 Produit en stock</span>
                           </label>
 
                           {/* Upload Image */}
@@ -1270,8 +1276,8 @@ export default function AdminDashboard() {
                                 {isUploading && <p className="text-purple-600 text-sm mt-2">📤 Upload en cours...</p>}
                               </div>
                               {imagePreview && (
-                                <img 
-                                  src={imagePreview} 
+                                <img
+                                  src={imagePreview}
                                   alt="Aperçu"
                                   className="w-24 h-24 object-cover rounded-lg border border-gray-300"
                                 />
@@ -1306,8 +1312,8 @@ export default function AdminDashboard() {
                     {/* Item */}
                     <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition border-l-4 border-purple-500 flex gap-4">
                       {product.imageUrl && (
-                        <img 
-                          src={product.imageUrl} 
+                        <img
+                          src={product.imageUrl}
                           alt={product.name}
                           className="w-16 h-16 object-cover rounded-lg"
                         />
@@ -1315,7 +1321,12 @@ export default function AdminDashboard() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold text-lg text-gray-900">{product.name}</h3>
-                          {product.featured && <span className="text-lg">📌</span>}
+                          {product.featured && <span className="text-lg" title="Vedette">📌</span>}
+                          {product.isInStock === false && (
+                            <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">
+                              RUPTURE
+                            </span>
+                          )}
                         </div>
                         {product.reference && (
                           <p className="text-xs text-gray-500">Réf: {product.reference}</p>
@@ -1370,30 +1381,30 @@ export default function AdminDashboard() {
                   <div className="overflow-x-auto -mx-3 lg:mx-0">
                     <div className="px-3 lg:px-0">
                       <table className="w-full text-left text-xs lg:text-sm min-w-max lg:min-w-full">
-                      <thead>
-                        <tr className="text-xs text-gray-600 border-b">
-                          <th className="py-2 px-2">Nom</th>
-                          <th className="py-2 px-2">Email</th>
-                          <th className="py-2 px-2 hidden sm:table-cell">Téléphone</th>
-                          <th className="py-2 px-2 hidden md:table-cell">Adresse</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {users
-                          .filter(u => {
-                            if (!userSearch) return true;
-                            const q = userSearch.toLowerCase();
-                            return (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
-                          })
-                          .map((u) => (
-                          <tr key={u.id} className="border-b text-xs sm:text-sm">
-                            <td className="py-3 px-2">{u.full_name || '—'}</td>
-                            <td className="py-3 px-2 truncate">{u.email}</td>
-                            <td className="py-3 px-2 hidden sm:table-cell">{u.phone || '—'}</td>
-                            <td className="py-3 px-2 hidden md:table-cell">{u.address || '—'}</td>
+                        <thead>
+                          <tr className="text-xs text-gray-600 border-b">
+                            <th className="py-2 px-2">Nom</th>
+                            <th className="py-2 px-2">Email</th>
+                            <th className="py-2 px-2 hidden sm:table-cell">Téléphone</th>
+                            <th className="py-2 px-2 hidden md:table-cell">Adresse</th>
                           </tr>
-                        ))}
-                      </tbody>
+                        </thead>
+                        <tbody>
+                          {users
+                            .filter(u => {
+                              if (!userSearch) return true;
+                              const q = userSearch.toLowerCase();
+                              return (u.full_name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+                            })
+                            .map((u) => (
+                              <tr key={u.id} className="border-b text-xs sm:text-sm">
+                                <td className="py-3 px-2">{u.full_name || '—'}</td>
+                                <td className="py-3 px-2 truncate">{u.email}</td>
+                                <td className="py-3 px-2 hidden sm:table-cell">{u.phone || '—'}</td>
+                                <td className="py-3 px-2 hidden md:table-cell">{u.address || '—'}</td>
+                              </tr>
+                            ))}
+                        </tbody>
                       </table>
                     </div>
                   </div>
@@ -1423,11 +1434,10 @@ export default function AdminDashboard() {
                         setSelectedCategoryId(cat.id);
                         if (activeTab === 'products') setSelectedSubId(null);
                       }}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition font-medium ${
-                        selectedCategoryId === cat.id
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition font-medium ${selectedCategoryId === cat.id
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
                     >
                       {cat.name}
                     </button>
@@ -1445,11 +1455,10 @@ export default function AdminDashboard() {
                     <button
                       key={sub.id}
                       onClick={() => setSelectedSubId(sub.id)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition font-medium ${
-                        selectedSubId === sub.id
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition font-medium ${selectedSubId === sub.id
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
                     >
                       {sub.name}
                     </button>

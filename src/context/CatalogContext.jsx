@@ -73,6 +73,7 @@ export function CatalogProvider({ children }) {
                   rating: parseFloat(p.rating),
                   imageUrl: p.image_url,
                   featured: p.featured,
+                  isInStock: p.is_in_stock !== undefined ? p.is_in_stock : true,
                   category_id: category.id,
                   category_name: category.name,
                 })),
@@ -86,7 +87,13 @@ export function CatalogProvider({ children }) {
             name: category.name,
             imageUrl: category.image_url,
             description: category.description,
-            subcategories: subcategoriesWithProducts,
+            subcategories: subcategoriesWithProducts.map(sub => ({
+              ...sub,
+              products: sub.products.map(p => ({
+                ...p,
+                isInStock: p.isInStock !== undefined ? p.isInStock : true
+              }))
+            })),
           };
         }),
       );
@@ -226,6 +233,7 @@ export function CatalogProvider({ children }) {
           rating: product.rating || 0,
           image_url: product.imageUrl || null,
           featured: product.featured || false,
+          is_in_stock: product.isInStock !== undefined ? product.isInStock : true,
         })
         .select()
         .single();
@@ -259,6 +267,7 @@ export function CatalogProvider({ children }) {
           rating: partial.rating || 0,
           image_url: partial.imageUrl || null,
           featured: partial.featured || false,
+          is_in_stock: partial.isInStock !== undefined ? partial.isInStock : true,
         })
         .eq('id', productId);
 

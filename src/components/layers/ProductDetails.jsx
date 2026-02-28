@@ -10,7 +10,7 @@ export default function ProductDetail({
 
   return (
     <>
-     
+
       <div
         className="fixed inset-0  bg-black/50 z-50"
         onClick={onClose}
@@ -49,11 +49,10 @@ export default function ProductDetail({
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-5 h-5 ${
-                        i < Math.floor(product.rating)
+                      className={`w-5 h-5 ${i < Math.floor(product.rating)
                           ? "fill-yellow-400 text-yellow-400"
                           : "text-gray-300"
-                      }`}
+                        }`}
                     />
                   ))}
                   <span className="text-gray-600">
@@ -79,16 +78,23 @@ export default function ProductDetail({
                 </div>
               </div>
 
-              <button
-                onClick={() => {
-                  onAddToCart(product);
-                  onClose();
-                }}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-lg transition bg-blue-500 text-white hover:bg-green-700"
-              >
-                <ShoppingCart className="w-6 h-6" />
-                Ajouter au panier
-              </button>
+              {product.isInStock === false ? (
+                <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center justify-center gap-2 font-semibold">
+                  <X className="w-5 h-5" />
+                  Rupture de stock
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    onAddToCart(product);
+                    onClose();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-lg transition bg-blue-500 text-white hover:bg-green-700"
+                >
+                  <ShoppingCart className="w-6 h-6" />
+                  Ajouter au panier
+                </button>
+              )}
             </div>
           </div>
         </div>
