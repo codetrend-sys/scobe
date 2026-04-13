@@ -5,9 +5,9 @@ import { NavLink } from "react-router-dom";
 import {informatique,imprimante,print,scolaire } from '../../images/index.jsx';
 
 const products = [
-  { id: 8, name: "Imprimantes & Solutions d'impression", description: "Imprimantes, toners et accessoires pour bureaux et impressions professionnelles.", image: imprimante },
-  { id: 8, name: "Ordinateurs & Accessoires", description: "Portables et PC de bureau, périphériques et composants pour usage personnel et professionnel.", image: informatique },
-  { id: 3, name: "Fournitures Scolaires", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
+  { id: 14, name: "Imprimantes & Solutions d'impression", description: "Imprimantes, toners et accessoires pour bureaux et impressions professionnelles.", image: imprimante },
+  { id: 14, name: "Ordinateurs & Accessoires", description: "Portables et PC de bureau, périphériques et composants pour usage personnel et professionnel.", image: informatique },
+  { id: 10, name: "Fournitures Scolaires", description: "Cahiers de qualité pour vos idées créatives.", image: scolaire },
   { id: 1000, name: "Demande de devis - Impression & Objets", description: "Devis personnalisé pour impressions (bâches, roll-up, affiches, vinyles) et objets publicitaires (stylos, mugs, clés USB).", image: print },
 ];
 
