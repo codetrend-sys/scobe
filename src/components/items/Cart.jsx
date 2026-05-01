@@ -9,10 +9,10 @@ export default function Cart({ isOpen, onClose, items, onUpdateQuantity, onRemov
   return (
     <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={onClose} />
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" onClick={onClose} />
 
       {/* Slide Cart */}
-      <div className="fixed right-0 top-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 flex flex-col">
+      <div className="fixed right-0 top-0 h-full w-full sm:w-96 bg-white shadow-2xl z-[9999] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-800">Panier</h2>

@@ -2,6 +2,7 @@ import { X, Star } from 'lucide-react';
 import { useFavorites } from '../../context/FavoritesContext.jsx';
 import { useCart } from '../../context/CartContext';
 import { useState } from 'react';
+import ProductDetailModal from '../items/ProductDetailModal.jsx';
 
 export default function Favorites() {
   const { favorites, removeFavorite } = useFavorites();
@@ -9,6 +10,8 @@ export default function Favorites() {
 
   const [error, setError] = useState('');
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!favorites || favorites.length === 0) {
     return (
@@ -60,12 +63,33 @@ export default function Favorites() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {favorites.map((product) => (
-          <div key={product.id} className="bg-white rounded-2xl shadow-md overflow-hidden relative">
+          <div 
+            key={product.id} 
+            className="bg-white rounded-2xl shadow-md overflow-hidden relative cursor-pointer group"
+            onClick={() => {
+              setSelectedProduct({
+                id: product.product_id,
+                name: product.product_name,
+                price: Number(product.product_price),
+                imageUrl: product.product_image_url,
+                category: product.category || 'Produit',
+                rating: product.rating || 0,
+                reference: product.reference || ''
+              });
+              setIsModalOpen(true);
+            }}
+          >
             <div className="aspect-square overflow-hidden">
               <img src={product.product_image_url} alt={product.product_name} className="w-full h-full object-cover hover:scale-110 transition duration-500" />
             </div>
 
-            <button onClick={() => handleRemoveClick(product.product_id, product.product_name)} className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveClick(product.product_id, product.product_name);
+              }} 
+              className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition z-10"
+            >
               <X className="w-6 h-6" />
             </button>
 
@@ -84,7 +108,13 @@ export default function Favorites() {
 
               <div className="flex items-center justify-between">
                 <span className="text-xl font-bold">{Number(product.product_price).toFixed(2)} DH</span>
-                <button onClick={() => addToCart({ id: product.product_id, name: product.product_name, price: product.product_price, imageUrl: product.product_image_url, category: product.category, rating: product.rating }, 1)} className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-green-600">
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation();
+                    addToCart({ id: product.product_id, name: product.product_name, price: product.product_price, imageUrl: product.product_image_url, category: product.category, rating: product.rating }, 1); 
+                  }} 
+                  className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-green-600 transition-colors"
+                >
                   Ajouter au panier
                 </button>
               </div>
@@ -105,6 +135,11 @@ export default function Favorites() {
           </div>
         </div>
       )}
+      <ProductDetailModal 
+        product={selectedProduct} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ProductDetail from '../layers/ProductDetails';
+import ProductDetailModal from '../items/ProductDetailModal.jsx';
 import { Star } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useCatalog } from '../../context/CatalogContext.jsx';
@@ -28,13 +28,20 @@ export default function SearchResults() {
   }) : [];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-20">
+    <section className="max-w-7xl mx-auto px-4 py-20 min-h-[60vh]">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold">Résultats de la recherche</h2>
         <p className="text-gray-600 mt-2">{query ? `Produits correspondant à "${query}"` : 'Aucun terme de recherche'}</p>
       </div>
 
-      {q && matches.length === 0 && (
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="w-12 h-12 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-500 font-medium">Chargement des produits...</p>
+        </div>
+      )}
+
+      {!loading && q && matches.length === 0 && (
         <div className="text-center text-gray-600">Aucun produit trouvé pour ce terme.</div>
       )}
 
@@ -79,7 +86,7 @@ export default function SearchResults() {
         ))}
       </div>
 
-      <ProductDetail product={selectedProduct} isOpen={isOpen} onClose={() => setIsOpen(false)} onAddToCart={(p) => addToCart(p, 1)} />
+      <ProductDetailModal product={selectedProduct} isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <ScrollToTopButton minScroll={100} />
     </section>
   );

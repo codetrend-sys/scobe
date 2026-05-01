@@ -4,6 +4,7 @@ import { SearchBar } from '../items/SearchBar.jsx';
 import { CategoriesDropdown } from '../items/DropDown.jsx';
 import { MobileMenu } from '../items/Menu.jsx';
 import { NavLink } from 'react-router-dom';
+import { UserMenu } from '../items/UserMenu.jsx';
 // import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 // import { useAuth } from '../../context/AuthContext';
@@ -24,7 +25,7 @@ export function Header() {
   const cartCount = cartItems.length;
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/25 backdrop-blur-md shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6  lg:px-8 lg:ml-20 mr-10">
           <div className="flex items-center justify-between h-28">
           <div className="flex lg:hidden items-center">
@@ -48,13 +49,18 @@ export function Header() {
               </p>
               </NavLink>
               {!isAdminAuthenticated && (
-                <NavLink to="/favorites" className="relative text-gray-700 p-2 font-medium hover:text-blue-900 text-lg rounded-full transition-colors flex items-center gap-2">
-                  Mes Favoris <Heart className="w-6 h-6 text-red-500" /> 
-                  {favoritesCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-400 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                      {favoritesCount}
-                    </span>
-                  )}
+                <NavLink to="/favorites" className="relative group flex items-center gap-2">
+                  <p className="text-gray-700 group-hover:text-blue-900 transition-colors font-medium text-lg">
+                    Mes Favoris
+                  </p>
+                  <div className="relative">
+                    <Heart className="w-6 h-6 text-red-500 group-hover:scale-110 transition-transform" /> 
+                    {favoritesCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold border-2 border-white">
+                        {favoritesCount}
+                      </span>
+                    )}
+                  </div>
                 </NavLink>
               )}
               {/* <a href="#" className="text-gray-700 hover:text-blue-900 transition-colors font-medium">
@@ -67,11 +73,24 @@ export function Header() {
                   Contact
                 </p>
               </NavLink>
-              <NavLink to={isAdminAuthenticated ? "/espace-prive" : (isAuthenticated ? "/profile" : "/login")}>
-                <p className="text-gray-700 hover:text-blue-900 transition-colors font-medium text-lg">
-                  {isAdminAuthenticated ? "Espace Admin" : (isAuthenticated ? "Mon Profil" : "Se connecter")}
-                </p>
-              </NavLink>
+              {isAdminAuthenticated ? (
+                <NavLink to="/espace-prive">
+                  <p className="text-gray-700 hover:text-blue-900 transition-colors font-medium text-lg">
+                    Espace Admin
+                  </p>
+                </NavLink>
+              ) : isAuthenticated ? (
+                <UserMenu />
+              ) : (
+                <NavLink to="/login" className="flex items-center gap-2 group">
+                  <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+                    <User size={20} className="text-gray-500 group-hover:text-blue-600 transition-colors" />
+                  </div>
+                  <p className="text-gray-700 group-hover:text-blue-900 transition-colors font-medium text-lg">
+                    Se connecter
+                  </p>
+                </NavLink>
+              )}
             </nav>
           </div>
           

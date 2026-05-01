@@ -58,51 +58,62 @@ export default function Checkout() {
     return true;
   };
 
+  const [showAuthOffer, setShowAuthOffer] = useState(false);
+
   const handleCheckout = async () => {
-  if (!validate()) return;
-
-  setSubmitting(true);
-  setError('');
-
-  const orderId = `guest-${Date.now()}`;
-
-  const order = {
-    id: orderId,
-    shipping: { fullname, address, city, phone },
-    items: cartItems.map(i => ({
-      name: i.product.name,
-      barcode: i.product.barcode || '',
-      reference: i.product.reference || '',
-      price: i.product.price,
-      quantity: i.quantity,
-    })),
-    total,
-    createdAt: new Date().toISOString(),
+    if (!validate()) return;
+    
+    // If user is not logged in, show the offer to create an account for tracking
+    if (!isAuthenticated) {
+      setShowAuthOffer(true);
+    } else {
+      await submitOrder();
+    }
   };
 
-  // 📝 Texte lisible pour l’email
-  const itemsText = order.items
-    .map(
-      item =>
-        `• ${item.name}${item.reference ? ` (réf : ${item.reference})` : ''}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
-    )
-    .join('\n');
+  const submitOrder = async () => {
+    setSubmitting(true);
+    setError('');
 
-  const formData = new URLSearchParams();
-  formData.append('order_id', order.id);
-  formData.append('fullname', fullname);
-  formData.append('phone', phone);
-  formData.append('city', city);
-  formData.append('address', address);
-  formData.append('items', itemsText);
-  formData.append('total', `${order.total.toFixed(2)} DH`);
-  formData.append('payment_method', 'Paiement à la livraison');
-  formData.append('created_at', order.createdAt);
+    const orderId = `guest-${Date.now()}`;
 
-  // Options Formsubmit
-  formData.append('_subject', `🛒 Nouvelle commande #${order.id}`);
-  formData.append('_template', 'table');
-  formData.append('_captcha', 'false');
+    const order = {
+      id: orderId,
+      shipping: { fullname, address, city, phone },
+      items: cartItems.map(i => ({
+        name: i.product.name,
+        barcode: i.product.barcode || '',
+        reference: i.product.reference || '',
+        price: i.product.price,
+        quantity: i.quantity,
+      })),
+      total,
+      createdAt: new Date().toISOString(),
+    };
+
+    // 📝 Texte lisible pour l’email
+    const itemsText = order.items
+      .map(
+        item =>
+          `• ${item.name}${item.reference ? ` (réf : ${item.reference})` : ''}${item.barcode ? ` (code-barres : ${item.barcode})` : ''} x${item.quantity} = ${(item.price * item.quantity).toFixed(2)} DH`
+      )
+      .join('\n');
+
+    const formData = new URLSearchParams();
+    formData.append('order_id', order.id);
+    formData.append('fullname', fullname);
+    formData.append('phone', phone);
+    formData.append('city', city);
+    formData.append('address', address);
+    formData.append('items', itemsText);
+    formData.append('total', `${order.total.toFixed(2)} DH`);
+    formData.append('payment_method', 'Paiement à la livraison');
+    formData.append('created_at', order.createdAt);
+
+    // Options Formsubmit
+    formData.append('_subject', `🛒 Nouvelle commande #${order.id}`);
+    formData.append('_template', 'table');
+    formData.append('_captcha', 'false');
 
     try {
       // Enregistrer la commande dans Supabase (table: orders)
@@ -117,7 +128,7 @@ export default function Checkout() {
               order_id: order.id,
               user_id: currentUser ? currentUser.id : null,
               shipping: order.shipping,
-              items: order.items,    // includes reference field now
+              items: order.items,
               total: order.total,
               status: 'pending',
               created_at: order.createdAt,
@@ -136,31 +147,31 @@ export default function Checkout() {
         console.error('Erreur Supabase:', supErr);
         setError("Impossible d'enregistrer la commande sur le serveur.");
       }
-    
 
-    // Envoi Formsubmit (email)
-    const res = await fetch('https://formsubmit.co/scobelibrairietanger@gmail.com', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept: 'application/json',
-      },
-      body: formData.toString(),
-    });
+      // Envoi Formsubmit (email)
+      const res = await fetch('https://formsubmit.co/scobelibrairietanger@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json',
+        },
+        body: formData.toString(),
+      });
 
-    if (!res.ok) throw new Error('Erreur Formsubmit');
+      if (!res.ok) throw new Error('Erreur Formsubmit');
 
-    clearCart();
-    sendToWhatsApp(order);
-    navigate('/order-confirmation');
+      clearCart();
+      sendToWhatsApp(order);
+      navigate('/order-confirmation');
 
-  } catch (e) {
-    console.error(e);
-    setError("Impossible d'envoyer la commande. Veuillez réessayer.");
-  } finally {
-    setSubmitting(false);
-  }
-};
+    } catch (e) {
+      console.error(e);
+      setError("Impossible d'envoyer la commande. Veuillez réessayer.");
+    } finally {
+      setSubmitting(false);
+      setShowAuthOffer(false);
+    }
+  };
 
 
 
@@ -343,6 +354,49 @@ export default function Checkout() {
   </aside>
 
       </div>
+
+      {/* Modal d'offre d'authentification */}
+      {showAuthOffer && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in fade-in zoom-in duration-300">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Suivre votre commande ?</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Si vous voulez visualiser si l'équipe a expédiée votre commande, nous vous conseillons de <strong>créer un compte</strong>.
+              </p>
+              <p className="text-[11px] text-gray-400 italic">
+                Vous pouvez également finaliser vos achats en tant qu'invité.
+              </p>
+              
+              <div className="pt-6 flex flex-col gap-3">
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                >
+                  Créer un compte
+                </button>
+                <button
+                  onClick={() => submitOrder()}
+                  className="w-full bg-white border-2 border-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                >
+                  Continuer en tant qu'invité
+                </button>
+                <button
+                  onClick={() => setShowAuthOffer(false)}
+                  className="text-gray-400 text-sm hover:text-gray-600 transition-colors mt-2"
+                >
+                  Retour
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

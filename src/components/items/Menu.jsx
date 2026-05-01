@@ -1,4 +1,4 @@
-import { Menu, X, Heart } from "lucide-react";
+import { Menu, X, Heart ,User} from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { NavLink } from 'react-router-dom';
@@ -20,7 +20,7 @@ export function MobileMenu() {
   const { favorites } = useFavorites();
   const favoritesCount = favorites.length;
   const { isAdminAuthenticated } = useAdminAuth();
-  const { isAuthenticated } = useUserAuth();
+  const { isAuthenticated, logout } = useUserAuth();
 
   return (
     <>
@@ -77,11 +77,35 @@ export function MobileMenu() {
                   Contact
                 </p>
               </NavLink>            
-              <NavLink to={isAdminAuthenticated ? "/espace-prive" : (isAuthenticated ? "/profile" : "/login")} onClick={() => setOpen(false)}>
-                <p className="text-gray-700 mt-5 hover:text-blue-900 transition-colors font-medium">
+              <NavLink 
+                to={isAdminAuthenticated ? "/espace-prive" : (isAuthenticated ? "/profile" : "/login")} 
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 mt-6 group"
+              >
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                  <User size={20} />
+                </div>
+                <p className="text-gray-700 font-bold group-hover:text-blue-900 transition-colors">
                   {isAdminAuthenticated ? "Espace Admin" : (isAuthenticated ? "Mon Profil" : "Se connecter")}
                 </p>
               </NavLink>
+              {isAuthenticated && !isAdminAuthenticated && (
+                <>
+                  <NavLink to="/my-orders" onClick={() => setOpen(false)}>
+                    <p className="text-gray-700 mt-5 hover:text-blue-900 transition-colors font-medium">
+                      Mes Commandes
+                    </p>
+                  </NavLink>
+                  <button 
+                    onClick={async () => { await logout(); setOpen(false); }}
+                    className="w-full text-left"
+                  >
+                    <p className="text-red-500 mt-5 hover:text-red-700 transition-colors font-medium">
+                      Se déconnecter
+                    </p>
+                  </button>
+                </>
+              )}
               </nav>
           </div>
         </>,

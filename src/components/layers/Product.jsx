@@ -2,7 +2,7 @@ import { X, Star, ShoppingCart, Truck, ShieldCheck, ChevronUp, Type } from 'luci
 import { useParams } from "react-router-dom";
 import { useState, useEffect ,useRef} from "react";
 import { useCatalog } from '../../context/CatalogContext.jsx';
-import ProductDetail from "./ProductDetails";
+import ProductDetailModal from '../items/ProductDetailModal.jsx';
 import { useCart } from '../../context/CartContext';
 import FavoriteButton from '../common/FavoriteButton.jsx';
 import ScrollToTopButton from '../items/ScrollToTopButton.jsx';
@@ -232,11 +232,10 @@ export default function Product(props) {
         </div>
       </section >
 
-      <ProductDetail
+      <ProductDetailModal
         product={selectedProduct}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        onAddToCart={(p) => { addToCart(p, 1); }}
       />
       {!hideScrollButton && <ScrollToTopButton />}
     </>

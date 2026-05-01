@@ -24,6 +24,7 @@ import AdminDashboard from './components/admin/AdminDashboard.jsx';
 import RequireAdmin from './components/admin/RequireAdmin.jsx';
 import ScrollToTop from './components/items/scrolltotop.jsx'
 import RequireUserAuth from './components/RequireUserAuth.jsx';
+import MyOrders from './components/pages/MyOrders.jsx';
 
 import { AdminAuthProvider } from './context/AdminAuthContext.jsx';
 import { UserAuthProvider } from './context/UserAuthContext.jsx';
@@ -57,6 +58,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/cart" element={<CartPage />} />
                     <Route path="/search" element={<SearchResults />} />
+                    <Route path="/my-orders" element={<RequireUserAuth><MyOrders /></RequireUserAuth>} />
                     <Route path="/categorie/:id" element={<SousCategorieCard />} />
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/order-confirmation" element={<OrderConfirmation />} />
