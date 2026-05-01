@@ -145,7 +145,7 @@ export default function SlideShow({ isPaused: externalIsPaused }) {
       {/* Flèches de navigation */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-40 p-3 rounded-full bg-blue-500 backdrop-blur-md text-white shadow-lg hover:bg-red-500 transition-all duration-300"
+        className="absolute -left-2 md:-left-16 top-1/2 transform -translate-y-1/2 z-40 p-3 rounded-full bg-blue-500/80 backdrop-blur-md text-white shadow-lg hover:bg-red-500 hover:scale-110 transition-all duration-300"
         aria-label="Slide précédente"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -155,7 +155,7 @@ export default function SlideShow({ isPaused: externalIsPaused }) {
 
       <button
         onClick={nextSlide}
-        className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-40 p-3 rounded-full bg-blue-500 backdrop-blur-md text-white shadow-lg hover:bg-red-500 transition-all duration-300"
+        className="absolute -right-2 md:-right-16 top-1/2 transform -translate-y-1/2 z-40 p-3 rounded-full bg-blue-500/80 backdrop-blur-md text-white shadow-lg hover:bg-red-500 hover:scale-110 transition-all duration-300"
         aria-label="Slide suivante"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
