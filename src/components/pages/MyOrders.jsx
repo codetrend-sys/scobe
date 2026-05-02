@@ -3,12 +3,16 @@ import { supabase } from '../../lib/supabase';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { Package, Clock, Truck, XCircle, ChevronRight, AlertCircle } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import StatusModal from '../common/StatusModal';
+import { useAlert } from '../common/AlertProvider';
 
 export default function MyOrders() {
   const { user, isAuthenticated } = useUserAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cancelModal, setCancelModal] = useState({ isOpen: false, orderId: null });
+  const alert = useAlert();
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -36,8 +40,6 @@ export default function MyOrders() {
   };
 
   const handleCancelOrder = async (orderId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) return;
-
     try {
       const { error } = await supabase
         .from('orders')
@@ -51,9 +53,11 @@ export default function MyOrders() {
       setOrders(orders.map(order => 
         order.order_id === orderId ? { ...order, status: 'cancelled' } : order
       ));
+      
+      alert.showSuccess('Commande annulée avec succès.');
     } catch (err) {
       console.error('Erreur lors de l\'annulation:', err);
-      alert('Une erreur est survenue lors de l\'annulation de la commande.');
+      alert.showError('Une erreur est survenue lors de l\'annulation de la commande.');
     }
   };
 
@@ -168,7 +172,7 @@ export default function MyOrders() {
                       </div>
                       {statusInfo.canCancel && (
                         <button
-                          onClick={() => handleCancelOrder(order.order_id)}
+                          onClick={() => setCancelModal({ isOpen: true, orderId: order.order_id })}
                           className="px-4 py-2 bg-red-50 text-red-600 rounded-full text-xs font-bold hover:bg-red-100 transition-colors"
                         >
                           Annuler
@@ -210,6 +214,18 @@ export default function MyOrders() {
           })}
         </div>
       )}
+
+      {/* Modal de confirmation d'annulation */}
+      <StatusModal
+        isOpen={cancelModal.isOpen}
+        onClose={() => setCancelModal({ isOpen: false, orderId: null })}
+        onConfirm={() => handleCancelOrder(cancelModal.orderId)}
+        title="Annuler la commande ?"
+        message="Êtes-vous sûr de vouloir annuler cette commande ? Cette action est irréversible."
+        type="danger"
+        confirmText="Oui, annuler"
+        cancelText="Non, garder"
+      />
     </section>
   );
 }

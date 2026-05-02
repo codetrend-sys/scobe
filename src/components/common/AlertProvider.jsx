@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { X } from 'lucide-react';
 
 const AlertContext = createContext(null);
 
@@ -31,14 +32,26 @@ export function AlertProvider({ children }) {
       {children}
 
       {/* Toast container */}
-      <div className="fixed right-4 top-4 z-50 flex flex-col gap-3 items-end">
+      <div className="fixed right-4 bottom-4 z-[110] flex flex-col gap-3 items-end pointer-events-none">
         {toasts.map((t) => (
-          <div key={t.id} className={`max-w-sm w-full px-4 py-3 rounded shadow-lg text-white border ${
-            t.type === 'success' ? 'bg-emerald-600 border-emerald-700' : t.type === 'error' ? 'bg-red-600 border-red-700' : 'bg-gray-800 border-gray-700'
-          }`}>
-            <div className="flex items-start gap-3">
-              <div className="flex-1 text-sm">{t.message}</div>
-              <button onClick={() => removeToast(t.id)} className="opacity-80 hover:opacity-100">✕</button>
+          <div 
+            key={t.id} 
+            className={`pointer-events-auto max-w-sm w-full px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md border animate-in slide-in-from-right-full duration-300 ${
+              t.type === 'success' 
+                ? 'bg-emerald-500/90 border-emerald-400 text-white' 
+                : t.type === 'error' 
+                ? 'bg-red-500/90 border-red-400 text-white' 
+                : 'bg-gray-900/90 border-gray-700 text-white'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex-1 text-sm font-bold tracking-tight">{t.message}</div>
+              <button 
+                onClick={() => removeToast(t.id)} 
+                className="p-1 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
           </div>
         ))}
